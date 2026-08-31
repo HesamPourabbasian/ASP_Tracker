@@ -53,3 +53,18 @@ export interface ProductListResponse {
   pagination: PaginationInfo;
   availableBrands: string[];
 }
+
+export interface StatsResponse {
+  problematicCount: number;
+  correctedCount: number;
+  totalCount: number;
+}
+
+export interface ProductFormData {
+  productName: string;
+  brand: string;
+  siteCode: string;
+  link?: string;
+  date: string;
+  description: string;
+}
