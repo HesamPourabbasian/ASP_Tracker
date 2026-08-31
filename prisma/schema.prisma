@@ -23,3 +23,20 @@ model ProblematicProduct {
   @@index([existingSiteCode])
   @@index([createdAt])
 }
+
+model CorrectedProduct {
+  id                String   @id @default(cuid())
+  productName       String
+  brand             String
+  correctedSiteCode String
+  link              String?
+  date              String
+  description       String   @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([productName])
+  @@index([brand])
+  @@index([correctedSiteCode])
+  @@index([createdAt])
+}
