@@ -29,6 +29,25 @@ const sampleProblematicProducts = [
   },
 ];
 
+const sampleCorrectedProducts = [
+  {
+    productName: 'سرور Dell PowerEdge R740',
+    brand: 'Dell',
+    correctedSiteCode: 'DELL-R740-CORR-01',
+    link: 'https://example.com/dell-r740',
+    date: '1403/05/20',
+    description: 'تعویض کارت رید کنترلر PERC H730P و تست کامل کش 2 گیگابایتی، کلیه تست‌های پایداری پاس شدند.',
+  },
+  {
+    productName: 'فایروال فورتی‌نت FortiGate 60F',
+    brand: 'Fortinet',
+    correctedSiteCode: 'FG-60F-REV2',
+    link: 'https://example.com/fortigate-60f',
+    date: '1403/05/22',
+    description: 'ارتقا فریمور به نگارش 7.2.5 و بازنشانی تنظیمات پیش‌فرض کارخانه، تست ترافیک با موفقیت انجام شد.',
+  },
+];
+
 async function main() {
   console.log('Seeding problematic products...');
 }
