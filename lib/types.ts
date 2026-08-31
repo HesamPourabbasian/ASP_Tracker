@@ -38,3 +38,18 @@ export interface UnifiedProduct {
   updatedAt: Date | string;
   rowNumber: number;
 }
+
+export interface PaginationInfo {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export interface ProductListResponse {
+  items: UnifiedProduct[];
+  pagination: PaginationInfo;
+  availableBrands: string[];
+}
