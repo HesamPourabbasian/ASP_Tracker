@@ -68,3 +68,15 @@ export interface ProductFormData {
   date: string;
   description: string;
 }
+
+export interface DeleteRangeRequest {
+  fromRow: number;
+  toRow: number;
+}
+
+export interface BulkDeleteRequest {
+  ids?: string[];
+  fromRow?: number;
+  toRow?: number;
+  all?: boolean;
+}
