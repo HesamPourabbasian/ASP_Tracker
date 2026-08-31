@@ -16,3 +16,13 @@ export function toGregorianDate(jalaliDateStr: string): Date | null {
   const g = jalaali.toGregorian(jy, jm, jd);
   return new Date(g.gy, g.gm - 1, g.gd);
 }
+
+export function toPersianDigits(num: number | string): string {
+  const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  return String(num).replace(/[0-9]/g, (w) => persianDigits[+w]);
+}
+
+export function formatPersianDate(dateStr: string): string {
+  if (!dateStr) return '-';
+  return toPersianDigits(dateStr);
+}
