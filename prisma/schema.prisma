@@ -6,3 +6,20 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model ProblematicProduct {
+  id               String   @id @default(cuid())
+  productName      String
+  brand            String
+  existingSiteCode String
+  link             String?
+  date             String
+  description      String   @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([productName])
+  @@index([brand])
+  @@index([existingSiteCode])
+  @@index([createdAt])
+}
