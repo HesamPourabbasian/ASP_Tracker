@@ -45,3 +45,12 @@
     --ring: #1d4ed8;
   }
 }
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+  direction: rtl;
+  text-align: right;
+  min-height: 100vh;
+}
