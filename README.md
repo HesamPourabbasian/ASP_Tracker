@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# سامانه پیگیری محصولات ASP (ASP Tracker)
 
-## Getting Started
+یک نرم‌افزار فول‌استک مدرن، سریع و کاملاً بومی‌سازی شده بر پایه **Next.js 16 (App Router)**، **TypeScript**، **Prisma ORM**، **PostgreSQL** و **Tailwind CSS 4** برای مدیریت و ردیابی وضعیت تجهیزات، سرورها و قطعات معیوب و اصلاح شده.
 
-First, run the development server:
+---
 
+## 🌟 ویژگی‌های کلیدی (Key Features)
+
+- **رابط کاربری کاملاً راست‌چین و فارسی (RTL & Persian Native)**: فونت یکپارچه وزیرمتن، تاریخ‌های تماماً شمسی با استفاده از کتابخانه تقویم جلالی، و تبدیل هوشمند اعداد انگلیسی به فارسی.
+- **پیشخوان آماری و KPIها (Executive Dashboard)**: نمایش بلادرنگ وضعیت اقلام، تعداد کل، موارد در انتظار بررسی و اقلام با موفقیت اصلاح شده همراه با درصد پیشرفت.
+- **مدیریت محصولات دارای ایراد (Problematic Products)**: ثبت اطلاعات کامل سخت‌افزار، کد رهگیری سایت، برند، لینک فاکتور/فروشگاه، توضیحات فنی نقص و امکان ویرایش یا حذف تکی و گروهی.
+- **مدیریت محصولات اصلاح شده (Corrected Products)**: ثبت سوابق تجهیزات بازسازی شده، کد رهگیری نهایی، اقدامات انجام یافته و وضعیت سلامت دستگاه.
+- **فیلتراسیون و جستجوی چندبعدی (Advanced Search & Filtering)**: جستجوی لحظه‌ای بدون افت فریم (Debounced Search) در تمام مشخصات و فیلتر بر اساس برند و بازه تاریخی.
+- **عملیات حذف پیشرفته و گروهی (Batch & Range Deletion)**: حذف بازه‌ای با شماره ردیف (مثلاً ردیف ۵ تا ۱۵) همراه با تاییدیه دو مرحله‌ای امنیتی.
+- **خروجی چاپی و PDF اختصاصی (Print & PDF Generation)**: صفحه اختصاصی نسخه چاپی با استایل‌دهی اختصاصی `@media print`، امکان انتخاب ستون‌ها و سفارشی‌سازی سربرگ و پانویس.
+- **سیستم نوتیفیکیشن Toast اختصاصی**: بازخورد‌های نرم و زیبا بدون وابستگی‌های سنگین خارجی.
+- **پایگاه داده قدرتمند با Prisma ORM**: اسکیمای بهینه‌شده به همراه ایندکس‌گذاری چندگانه برای پاسخ‌دهی سریع در حجم داده‌های بالا.
+
+---
+
+## 🛠️ تکنولوژی‌های به‌کار رفته (Tech Stack)
+
+- **فریم‌ورک فرانت‌اند / بک‌اند**: Next.js 16 (App Router) + React 19
+- **زبان برنامه‌نویسی**: TypeScript 5
+- **طراحی و استایل‌دهی**: Tailwind CSS 4 + Lucide React Icons
+- **پایگاه‌داده و نگاشت شیء-رابطه‌ای (ORM)**: PostgreSQL + Prisma ORM 5.22
+- **اعتبارسنجی داده‌ها**: Zod 4
+- **مدیریت تاریخ شمسی**: Jalaali-js
+
+---
+
+## 🚀 راهنمای نصب و راه‌اندازی (Getting Started)
+
+### ۱. پیش‌نیازها
+- Node.js نگارش 18 یا بالاتر
+- دیتابیس PostgreSQL فعال
+
+### ۲. کلون مخزن
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/HesamPourabbasian/ASP_Tracker.git
+cd ASP_Tracker
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### ۳. نصب وابستگی‌ها
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ۴. تنظیم متغیرهای محیطی
+فایل نمونه `.env.example` را به نام `.env` کپی کنید و آدرس دیتابیس خود را وارد نمایید:
+```bash
+cp .env.example .env
+```
+محتوای `.env`:
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/asp_tracker?schema=public"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ۵. اعمال مایگریشن و اجرای سید دیتابیس
+```bash
+npx prisma db push
+npx tsx prisma/seed.ts
+```
 
-## Learn More
+### ۶. اجرای سرور توسعه
+```bash
+npm run dev
+```
+سپس مرورگر خود را باز کرده و به آدرس [http://localhost:3005](http://localhost:3005) مراجعه کنید.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📂 ساختار پوشه‌بندی پروژه (Project Structure)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+├── app/
+│   ├── api/                  # اندپوینت‌های بک‌اند Next.js API Routes
+│   │   ├── problematic/      # عملیات CRUD محصولات دارای ایراد
+│   │   ├── corrected/        # عملیات CRUD محصولات اصلاح شده
+│   │   └── stats/            # آمار تجمیعی پیشخوان
+│   ├── problematic/          # صفحه مدیریت محصولات معیوب
+│   ├── corrected/            # صفحه مدیریت محصولات اصلاح شده
+│   ├── print/                # ویوی اختصاصی پرینت و خروجی PDF
+│   ├── globals.css           # استایل‌های سراسری، پالت رنگ و قوانین پرینت
+│   ├── layout.tsx            # چیدمان اصلی با پشتیبانی از فونت وزیرمتن و RTL
+│   └── page.tsx              # داشبورد اصلی سامانه
+├── components/
+│   ├── common/               # هدر و نوار وضعیت آمار (Header, StatsBar)
+│   ├── products/             # جداول، فیلترها، مودال‌های افزودن، ویرایش و حذف
+│   └── ui/                   # سیستم اعلانات ToastContext
+├── lib/
+│   ├── date-utils.ts         # مبدل‌ها و فرمت‌کننده‌های تاریخ شمسی
+│   ├── prisma.ts             # نمونه یکتای سراسری (Singleton) کلاینت پریزما
+│   ├── types.ts              # تایپ‌ها و اینترفیس‌های کامل تایپ‌اسکریپت
+│   └── validations.ts        # اسکیماهای اعتبارسنجی Zod
+└── prisma/
+    ├── schema.prisma         # مدل داده و ایندکس‌های PostgreSQL
+    └── seed.ts               # اسکریپت تولید داده‌های نمونه واقعی فارسی
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 لایسنس
+توسعه یافته توسط [Hesam Pourabbasian](https://github.com/HesamPourabbasian).
