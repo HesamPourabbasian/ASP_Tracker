@@ -1,0 +1,191 @@
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import StatsBar from '@/components/common/StatsBar';
+import FilterBar from '@/components/products/FilterBar';
+import ProductTable from '@/components/products/ProductTable';
+import Pagination from '@/components/products/Pagination';
+import { UnifiedProduct, PaginationInfo } from '@/lib/types';
+import { CheckCircle2, RefreshCw } from 'lucide-react';
+import { toPersianDigits } from '@/lib/date-utils';
+
+export default function CorrectedProductsPage() {
+  const [items, setItems] = useState<UnifiedProduct[]>([]);
+  const [availableBrands, setAvailableBrands] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<{ problematicCount: number; correctedCount: number }>({
+    problematicCount: 0,
+    correctedCount: 0,
+  });
+
+  // Filter & Pagination States
+  const [search, setSearch] = useState('');
+  const [brand, setBrand] = useState('all');
+  const [hasLink, setHasLink] = useState('all');
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    page: 1,
+    pageSize: 20,
+    totalItems: 0,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
+
+  // Fetch stats
+  const fetchStats = async () => {
+    try {
+      const res = await fetch('/api/stats');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success) {
+          setStats(json.data);
+        }
+      }
+    } catch (e) {
+      console.error('Error fetching stats:', e);
+    }
+  };
+
+  // Fetch table data
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.set('page', String(page));
+      params.set('pageSize', String(pageSize));
+      if (search.trim()) params.set('search', search.trim());
+      if (brand && brand !== 'all') params.set('brand', brand);
+      if (hasLink && hasLink !== 'all') params.set('hasLink', hasLink);
+      params.set('sortBy', sortBy);
+      params.set('sortOrder', sortOrder);
+
+      const res = await fetch(`/api/corrected?${params.toString()}`);
+      const json = await res.json();
+
+      if (res.ok && json.success) {
+        setItems(json.data.items || []);
+        setPagination(json.data.pagination);
+        setAvailableBrands(json.data.availableBrands || []);
+      }
+    } catch (err) {
+      console.error('Error loading corrected products:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, pageSize, search, brand, hasLink, sortBy, sortOrder]);
+
+  useEffect(() => {
+    fetchData();
+    fetchStats();
+  }, [fetchData]);
+
+  const handleResetFilters = () => {
+    setSearch('');
+    setBrand('all');
+    setHasLink('all');
+    setSortBy('createdAt');
+    setSortOrder('asc');
+    setPage(1);
+  };
+
+  const isFiltered =
+    Boolean(search) || brand !== 'all' || hasLink !== 'all' || sortBy !== 'createdAt' || sortOrder !== 'asc';
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-600/10 border border-emerald-600/20 text-emerald-600 flex items-center justify-center shadow-xs">
+            <CheckCircle2 className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              تصحیح شده توسط من
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+              آرشیو قطعات و اقلامی که کدهای فنی آنها با موفقیت بازبینی و اصلاح شده‌اند
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            fetchData();
+            fetchStats();
+          }}
+          className="self-start sm:self-auto flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-bold transition-all shadow-2xs hover:bg-slate-50 cursor-pointer"
+          title="بروزرسانی جدول"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 ${loading ? 'animate-spin' : ''}`} />
+          <span>بروزرسانی داده‌ها</span>
+        </button>
+      </div>
+
+      {/* Summary Stats Cards */}
+      <StatsBar
+        problematicCount={stats.problematicCount}
+        correctedCount={stats.correctedCount}
+        activeType="corrected"
+      />
+
+      {/* Filter and Search Bar */}
+      <FilterBar
+        search={search}
+        onSearchChange={(v) => {
+          setSearch(v);
+          setPage(1);
+        }}
+        brand={brand}
+        onBrandChange={(b) => {
+          setBrand(b);
+          setPage(1);
+        }}
+        hasLink={hasLink}
+        onHasLinkChange={(l) => {
+          setHasLink(l);
+          setPage(1);
+        }}
+        sortBy={sortBy}
+        onSortByChange={(s) => {
+          setSortBy(s);
+          setPage(1);
+        }}
+        sortOrder={sortOrder}
+        onSortOrderToggle={() =>
+          setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))
+        }
+        availableBrands={availableBrands}
+        onReset={handleResetFilters}
+        isFiltered={isFiltered}
+      />
+
+      {/* Main Table */}
+      <ProductTable
+        type="corrected"
+        items={items}
+        pagination={pagination}
+        loading={loading}
+        onRefresh={() => {
+          fetchData();
+          fetchStats();
+        }}
+      />
+
+      {/* Pagination Controls */}
+      <Pagination
+        pagination={pagination}
+        onPageChange={(p) => setPage(p)}
+        onPageSizeChange={(ps) => {
+          setPageSize(ps);
+          setPage(1);
+        }}
+      />
+    </div>
+  );
+}
