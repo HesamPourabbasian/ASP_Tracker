@@ -30,9 +30,9 @@ export function ProductTable({ items, isLoading }: ProductTableProps) {
           {items.map((item) => (
             <tr key={item.id} className="border-b border-slate-100 dark:border-slate-800/50">
               <td className="py-3.5 px-4">{item.rowNumber}</td>
-              <td className="py-3.5 px-4 font-medium">{item.productName}</td>
+              <td className="py-3.5 px-4 font-medium text-slate-900 dark:text-slate-100">{item.productName}</td>
               <td className="py-3.5 px-4">{item.brand}</td>
-              <td className="py-3.5 px-4 font-mono">{item.siteCode}</td>
+              <td className="py-3.5 px-4 font-mono text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded inline-block">{item.siteCode}</td>
               <td className="py-3.5 px-4">{item.date}</td>
               <td className="py-3.5 px-4">-</td>
             </tr>
