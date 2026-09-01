@@ -18,7 +18,7 @@ export function ProductTable({ items, isLoading }: ProductTableProps) {
       <table className="w-full text-sm text-right">
         <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700">
           <tr>
-            <th className="py-3.5 px-4">ردیف</th>
+            <th className="py-3.5 px-4 w-10"><input type="checkbox" className="rounded" /></th><th className="py-3.5 px-4">ردیف</th>
             <th className="py-3.5 px-4">نام محصول</th>
             <th className="py-3.5 px-4">برند</th>
             <th className="py-3.5 px-4">کد سایت</th>
@@ -29,7 +29,7 @@ export function ProductTable({ items, isLoading }: ProductTableProps) {
         <tbody>
           {items.map((item) => (
             <tr key={item.id} className="border-b border-slate-100 dark:border-slate-800/50">
-              <td className="py-3.5 px-4">{item.rowNumber}</td>
+              <td className="py-3.5 px-4 w-10"><input type="checkbox" className="rounded" /></td><td className="py-3.5 px-4">{item.rowNumber}</td>
               <td className="py-3.5 px-4 font-medium text-slate-900 dark:text-slate-100">{item.productName}</td>
               <td className="py-3.5 px-4">{item.brand}</td>
               <td className="py-3.5 px-4 font-mono text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded inline-block">{item.siteCode}</td>
