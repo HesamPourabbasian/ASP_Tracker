@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Printer, ArrowRight, Loader2, Leaf, TableProperties } from 'lucide-react';
+import { Printer, ArrowRight, Loader2, Leaf, TableProperties, Pencil } from 'lucide-react';
 import { UnifiedProduct, ProductType } from '@/lib/types';
 import {
   toPersianDigits,
@@ -35,8 +35,10 @@ function PrintContent() {
     return Boolean(month) || mode === 'month' || paperSaverParam === 'true';
   });
 
-  const sectionTitle =
-    type === 'problematic' ? 'کالاهای مشکل‌دار' : 'تصحیح شده توسط من';
+  // Section title is editable by user in printing area
+  const [sectionTitle, setSectionTitle] = useState<string>(() => {
+    return type === 'problematic' ? 'کالاهای مشکل‌دار' : 'تصحیح شده توسط من';
+  });
   const siteCodeHeader =
     type === 'problematic' ? 'کد موجود در سایت' : 'کد اصلاح شده سایت';
 
@@ -194,14 +196,27 @@ function PrintContent() {
       {/* Top Floating Control Bar - Hidden on print */}
       <div className="no-print bg-slate-900 text-white rounded-2xl p-4 mb-6 shadow-xl flex flex-wrap items-center justify-between gap-4 sticky top-4 z-50 border border-slate-700 max-w-[210mm] mx-auto">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center font-black text-white">
+          <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center font-black text-white shrink-0">
             ASP
           </div>
           <div>
             <h1 className="font-bold text-base">پیش‌نمایش چاپ و تبدیل به PDF</h1>
-            <p className="text-xs text-slate-400">
-              بخش {sectionTitle} — {getRangeLabel()}
-            </p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-xs text-slate-400 flex items-center gap-1 font-bold">
+                <Pencil className="w-3 h-3 text-red-400" />
+                عنوان بخش:
+              </span>
+              <input
+                type="text"
+                value={sectionTitle}
+                onChange={(e) => setSectionTitle(e.target.value)}
+                className="bg-slate-800 border border-slate-600 focus:border-red-500 rounded px-2 py-0.5 text-xs font-bold text-white outline-hidden w-36 sm:w-48"
+                title="جهت ویرایش عنوان بخش تایپ کنید"
+                placeholder="عنوان بخش..."
+              />
+              <span className="text-xs text-slate-500">—</span>
+              <span className="text-xs text-slate-400">{getRangeLabel()}</span>
+            </div>
           </div>
         </div>
 
@@ -281,9 +296,19 @@ function PrintContent() {
                           <h1 className="font-black text-sm tracking-tight text-slate-900">
                             ASP TRACKER
                           </h1>
-                          <span className="text-[10px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">
-                            {sectionTitle}
-                          </span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-[9px] text-slate-500 font-bold no-print">بخش:</span>
+                            <input
+                              type="text"
+                              value={sectionTitle}
+                              onChange={(e) => setSectionTitle(e.target.value)}
+                              className="no-print text-[10px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200 hover:border-red-400 focus:border-red-600 outline-hidden transition-all w-28 sm:w-36"
+                              title="جهت ویرایش عنوان بخش کلیک کنید"
+                            />
+                            <span className="print-only hidden text-[10px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                              {sectionTitle}
+                            </span>
+                          </div>
                           {month && (
                             <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
                               ماه {getIranianMonthName(month)}
@@ -379,7 +404,16 @@ function PrintContent() {
             <div className="mt-4 bg-slate-100 p-2.5 rounded-lg flex items-center justify-between border border-slate-200">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-700">عنوان بخش:</span>
-                <span className="text-sm font-black text-red-700">{sectionTitle}</span>
+                <input
+                  type="text"
+                  value={sectionTitle}
+                  onChange={(e) => setSectionTitle(e.target.value)}
+                  className="no-print text-sm font-black text-red-700 bg-white border border-slate-300 hover:border-red-400 focus:border-red-600 focus:ring-1 focus:ring-red-400 px-2.5 py-0.5 rounded outline-hidden transition-all w-44 sm:w-60"
+                  title="جهت ویرایش عنوان بخش کلیک کنید"
+                />
+                <span className="print-only hidden text-sm font-black text-red-700">
+                  {sectionTitle}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-700">محدوده گزارش:</span>
