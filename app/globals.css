@@ -35,13 +35,13 @@ body {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 12mm 10mm 15mm 10mm;
+    margin: 6mm 6mm 6mm 6mm;
   }
   
   body {
     background: #ffffff !important;
     color: #000000 !important;
-    font-size: 11pt;
+    font-size: 10pt;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -75,13 +75,55 @@ body {
 
   .print-table th, .print-table td {
     border: 1px solid #cbd5e1 !important;
-    padding: 6px 8px !important;
-    font-size: 10pt !important;
+    padding: 5px 6px !important;
+    font-size: 9.5pt !important;
   }
 
   .print-table th {
     background-color: #dc2626 !important;
     color: #ffffff !important;
     font-weight: 700 !important;
+  }
+
+  /* Paper saver (100 items per page) styles */
+  .print-page-sheet {
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .print-page-sheet:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  .paper-saver-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+  }
+
+  .paper-saver-table th, .paper-saver-table td {
+    padding: 1.5px 3px !important;
+    font-size: 7pt !important;
+    line-height: 1.2 !important;
+    border: 1px solid #cbd5e1 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .paper-saver-table th {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    padding: 2px 3px !important;
+    font-size: 7.5pt !important;
   }
 }

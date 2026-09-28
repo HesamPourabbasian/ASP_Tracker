@@ -55,7 +55,7 @@ export default function PdfExportModal({
     } else if (exportMode === 'selected') {
       url += `&ids=${selectedIds.join(',')}`;
     } else if (exportMode === 'month') {
-      url += `&month=${selectedMonth}`;
+      url += `&month=${selectedMonth}&paperSaver=true`;
     }
 
     // Open print page in a new window/tab
@@ -208,19 +208,25 @@ export default function PdfExportModal({
                 </span>
 
                 {exportMode === 'month' && (
-                  <div className="mt-3 pt-3 border-t border-red-100 flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-700">انتخاب ماه:</span>
-                    <select
-                      value={selectedMonth}
-                      onChange={(e) => setSelectedMonth(e.target.value)}
-                      className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold text-slate-800 text-xs focus:border-red-600 bg-white"
-                    >
-                      {PERSIAN_MONTH_DETAILS.map((m) => (
-                        <option key={m.key} value={m.key}>
-                          {m.name}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="mt-3 pt-3 border-t border-red-100 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-700">انتخاب ماه:</span>
+                      <select
+                        value={selectedMonth}
+                        onChange={(e) => setSelectedMonth(e.target.value)}
+                        className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold text-slate-800 text-xs focus:border-red-600 bg-white"
+                      >
+                        {PERSIAN_MONTH_DETAILS.map((m) => (
+                          <option key={m.key} value={m.key}>
+                            {m.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-[11px] text-emerald-800 font-bold bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
+                      <span>🌱 حالت صرفه‌جویی در مصرف کاغذ فعال است (حداقل ۱۰۰ کالا در هر برگه A4).</span>
+                    </div>
                   </div>
                 )}
               </div>
