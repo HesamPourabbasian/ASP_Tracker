@@ -512,8 +512,11 @@ export default function ProductTable({
                         </td>
                       </tr>
 
-                      {/* Month Rows */}
-                      {!isCollapsed && group.items.map(renderRow)}
+                      {/* Month Rows with independent month-by-month sequential numbering */}
+                      {!isCollapsed &&
+                        group.items.map((item, idx) =>
+                          renderRow({ ...item, rowNumber: idx + 1 })
+                        )}
                     </React.Fragment>
                   );
                 })

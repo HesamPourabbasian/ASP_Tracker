@@ -277,6 +277,12 @@ export function groupTracksByIranianMonth<T extends { date: string }>(
       }
       return (b.rowNumber || 0) - (a.rowNumber || 0);
     });
+
+    // Assign sequential month-by-month row numbers (1, 2, 3, ...) so each month counts independently
+    group.items.forEach((item: any, idx: number) => {
+      item.rowNumber = idx + 1;
+      item.monthRowNumber = idx + 1;
+    });
   }
 
   return result;

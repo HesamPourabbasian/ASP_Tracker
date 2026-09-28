@@ -155,18 +155,28 @@ export async function GET(request: Request) {
       ? Math.max(1, parseInt(fromRowParam, 10))
       : (page - 1) * pageSize + 1;
 
-    const unifiedItems = items.map((item, index) => ({
-      id: item.id,
-      productName: item.productName,
-      brand: item.brand,
-      siteCode: item.correctedSiteCode,
-      link: item.link,
-      date: item.date,
-      description: item.description,
-      createdAt: item.createdAt,
-      updatedAt: item.updatedAt,
-      rowNumber: startRowNumber + index,
-    }));
+    // Track month-by-month counting so each month counts in order starting from 1
+    const monthCounters: Record<string, number> = {};
+
+    const unifiedItems = items.map((item, index) => {
+      const ym = extractJalaliYearMonth(item.date);
+      const ymKey = ym ? ym.yearMonthKey : 'unknown';
+      monthCounters[ymKey] = (monthCounters[ymKey] || 0) + 1;
+
+      return {
+        id: item.id,
+        productName: item.productName,
+        brand: item.brand,
+        siteCode: item.correctedSiteCode,
+        link: item.link,
+        date: item.date,
+        description: item.description,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        rowNumber: month ? (startRowNumber + index) : monthCounters[ymKey],
+        monthRowNumber: monthCounters[ymKey],
+      };
+    });
 
     const totalPages = Math.ceil(totalItems / pageSize) || 1;
 

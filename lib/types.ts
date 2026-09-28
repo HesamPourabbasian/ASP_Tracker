@@ -37,6 +37,7 @@ export interface UnifiedProduct {
   createdAt: Date | string;
   updatedAt: Date | string;
   rowNumber: number;
+  monthRowNumber?: number;
 }
 
 export interface PaginationInfo {

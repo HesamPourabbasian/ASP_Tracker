@@ -89,6 +89,12 @@ function PrintContent() {
             return (b.rowNumber || 0) - (a.rowNumber || 0);
           });
 
+          // Ensure sequential row numbering starting from 1 for the month/printed items
+          fetchedItems.forEach((item, index) => {
+            item.rowNumber = index + 1;
+            item.monthRowNumber = index + 1;
+          });
+
           setItems(fetchedItems);
         }
       } catch (err) {
