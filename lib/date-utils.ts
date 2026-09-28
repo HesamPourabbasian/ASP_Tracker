@@ -263,5 +263,21 @@ export function groupTracksByIranianMonth<T extends { date: string }>(
       : a.yearMonthKey.localeCompare(b.yearMonthKey);
   });
 
+  // Always sort items within each month group from newer to latest
+  for (const group of result) {
+    group.items.sort((a: any, b: any) => {
+      const dateA = normalizeJalaliDate(toEnglishDigits(a.date || ''));
+      const dateB = normalizeJalaliDate(toEnglishDigits(b.date || ''));
+      const dateComp = order === 'desc' ? dateB.localeCompare(dateA) : dateA.localeCompare(dateB);
+      if (dateComp !== 0) return dateComp;
+      if (a.createdAt && b.createdAt) {
+        const timeA = new Date(a.createdAt).getTime();
+        const timeB = new Date(b.createdAt).getTime();
+        return order === 'desc' ? timeB - timeA : timeA - timeB;
+      }
+      return (b.rowNumber || 0) - (a.rowNumber || 0);
+    });
+  }
+
   return result;
 }

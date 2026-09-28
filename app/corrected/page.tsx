@@ -28,8 +28,8 @@ export default function CorrectedProductsPage() {
   const [month, setMonth] = useState('all');
   const [year, setYear] = useState('all');
   const [hasLink, setHasLink] = useState('all');
-  const [sortBy, setSortBy] = useState('createdAt');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
@@ -104,8 +104,8 @@ export default function CorrectedProductsPage() {
     setMonth('all');
     setYear('all');
     setHasLink('all');
-    setSortBy('createdAt');
-    setSortOrder('asc');
+    setSortBy('date');
+    setSortOrder('desc');
     setPage(1);
   };
 
@@ -115,8 +115,8 @@ export default function CorrectedProductsPage() {
     month !== 'all' ||
     year !== 'all' ||
     hasLink !== 'all' ||
-    sortBy !== 'createdAt' ||
-    sortOrder !== 'asc';
+    sortBy !== 'date' ||
+    sortOrder !== 'desc';
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

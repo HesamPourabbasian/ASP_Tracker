@@ -13,8 +13,8 @@ export async function GET(request: Request) {
     const month = searchParams.get('month')?.trim() || '';
     const year = searchParams.get('year')?.trim() || '';
     const hasLink = searchParams.get('hasLink') || 'all';
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = (searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc') as 'asc' | 'desc';
+    const sortBy = searchParams.get('sortBy') || 'date';
+    const sortOrder = (searchParams.get('sortOrder') === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc';
     const pageParam = searchParams.get('page');
     const pageSizeParam = searchParams.get('pageSize');
     const fromRowParam = searchParams.get('fromRow');
@@ -73,16 +73,19 @@ export async function GET(request: Request) {
       ];
     }
 
-    // Build Order By
-    const orderBy: Prisma.CorrectedProductOrderByWithRelationInput = {};
+    // Build Order By (always show newer to latest by default)
+    const orderBy: Prisma.CorrectedProductOrderByWithRelationInput[] = [];
     if (sortBy === 'productName') {
-      orderBy.productName = sortOrder;
+      orderBy.push({ productName: sortOrder });
+      orderBy.push({ date: 'desc' });
     } else if (sortBy === 'brand') {
-      orderBy.brand = sortOrder;
-    } else if (sortBy === 'date') {
-      orderBy.date = sortOrder;
+      orderBy.push({ brand: sortOrder });
+      orderBy.push({ date: 'desc' });
+    } else if (sortBy === 'createdAt') {
+      orderBy.push({ createdAt: sortOrder });
     } else {
-      orderBy.createdAt = sortOrder;
+      orderBy.push({ date: sortOrder });
+      orderBy.push({ createdAt: sortOrder });
     }
 
     // Total Count for Pagination
