@@ -59,8 +59,8 @@ export default function ProductTable({
   const [rangeFrom, setRangeFrom] = useState('');
   const [rangeTo, setRangeTo] = useState('');
 
-  // Iranian monthly grouping state
-  const [isGroupedByMonth, setIsGroupedByMonth] = useState(false);
+  // Iranian monthly grouping state (default: true to show month by month)
+  const [isGroupedByMonth, setIsGroupedByMonth] = useState(true);
   const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
 
   const toggleMonthCollapse = (monthKey: string) => {
@@ -288,10 +288,14 @@ export default function ProductTable({
                 ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
                 : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-300'
             }`}
-            title="تفکیک سطرهای جدول بر اساس ماه‌های تقویم شمسی"
+            title={
+              isGroupedByMonth
+                ? 'کلیک جهت بازگشت به جدول یکپارچه و ساده'
+                : 'کلیک جهت تفکیک و دسته‌بندی سطرها بر اساس ماه‌های تقویم شمسی'
+            }
           >
             <Calendar className={`w-4 h-4 ${isGroupedByMonth ? 'text-red-400' : 'text-red-600'}`} />
-            <span>{isGroupedByMonth ? 'جدول یکپارچه' : 'تفکیک ماهانه سطرها'}</span>
+            <span>{isGroupedByMonth ? 'جدول یکپارچه (بدون تفکیک)' : 'تفکیک ماه به ماه سطرها'}</span>
           </button>
         </div>
 
