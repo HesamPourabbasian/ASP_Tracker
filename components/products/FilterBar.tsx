@@ -1,14 +1,17 @@
 'use client';
 
 import React from 'react';
-import { Search, Filter, RotateCcw, ArrowUpDown, Tag, Link as LinkIcon, X } from 'lucide-react';
-import { toPersianDigits } from '@/lib/date-utils';
+import { Search, Filter, RotateCcw, ArrowUpDown, Tag, Link as LinkIcon, X, Calendar } from 'lucide-react';
+import { toPersianDigits, PERSIAN_MONTH_DETAILS } from '@/lib/date-utils';
+import { IranianMonthOption } from '@/lib/types';
 
 interface FilterBarProps {
   search: string;
   onSearchChange: (value: string) => void;
   brand: string;
   onBrandChange: (value: string) => void;
+  month?: string;
+  onMonthChange?: (value: string) => void;
   hasLink: string;
   onHasLinkChange: (value: string) => void;
   sortBy: string;
@@ -16,6 +19,7 @@ interface FilterBarProps {
   sortOrder: 'asc' | 'desc';
   onSortOrderToggle: () => void;
   availableBrands: string[];
+  availableMonths?: IranianMonthOption[];
   onReset: () => void;
   isFiltered: boolean;
 }
@@ -25,6 +29,8 @@ export default function FilterBar({
   onSearchChange,
   brand,
   onBrandChange,
+  month = 'all',
+  onMonthChange,
   hasLink,
   onHasLinkChange,
   sortBy,
@@ -32,6 +38,7 @@ export default function FilterBar({
   sortOrder,
   onSortOrderToggle,
   availableBrands,
+  availableMonths = [],
   onReset,
   isFiltered,
 }: FilterBarProps) {
@@ -109,6 +116,25 @@ export default function FilterBar({
             ))}
           </select>
         </div>
+
+        {/* Iranian Month Filter */}
+        {onMonthChange && (
+          <div className="flex items-center gap-1.5">
+            <span className="text-slate-500 font-medium">ماه شمسی:</span>
+            <select
+              value={month}
+              onChange={(e) => onMonthChange(e.target.value)}
+              className="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-hidden focus:border-red-600 cursor-pointer text-xs"
+            >
+              <option value="all">همه ماه‌ها</option>
+              {PERSIAN_MONTH_DETAILS.map((m) => (
+                <option key={m.key} value={m.key}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Has Link Filter */}
         <div className="flex items-center gap-1.5">
