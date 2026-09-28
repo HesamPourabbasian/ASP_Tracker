@@ -48,16 +48,55 @@ export interface PaginationInfo {
   hasPrevPage: boolean;
 }
 
+export interface IranianMonthOption {
+  key: string;
+  monthNumber: number;
+  monthName: string;
+  year?: string;
+  label: string;
+  count?: number;
+}
+
+export interface MonthlyTrackGroup<T> {
+  year: string;
+  month: string;
+  monthNumber: number;
+  monthName: string;
+  yearMonthKey: string;
+  label: string;
+  items: T[];
+  count: number;
+}
+
+export interface MonthlyBreakdownItem {
+  yearMonthKey: string;
+  year: string;
+  month: string;
+  monthNumber: number;
+  monthName: string;
+  label: string;
+  problematicCount: number;
+  correctedCount: number;
+  totalCount: number;
+}
+
+export interface IranianMonthFilterParams {
+  month?: string;
+  year?: string;
+}
+
 export interface ProductListResponse {
   items: UnifiedProduct[];
   pagination: PaginationInfo;
   availableBrands: string[];
+  availableMonths?: IranianMonthOption[];
 }
 
 export interface StatsResponse {
   problematicCount: number;
   correctedCount: number;
   totalCount: number;
+  monthlyBreakdown?: MonthlyBreakdownItem[];
 }
 
 export interface ProductFormData {
