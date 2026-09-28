@@ -2,16 +2,20 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import StatsBar from '@/components/common/StatsBar';
+import MonthlyStatsBar from '@/components/common/MonthlyStatsBar';
 import FilterBar from '@/components/products/FilterBar';
+import IranianMonthTabs from '@/components/products/IranianMonthTabs';
 import ProductTable from '@/components/products/ProductTable';
 import Pagination from '@/components/products/Pagination';
-import { UnifiedProduct, PaginationInfo } from '@/lib/types';
+import { UnifiedProduct, PaginationInfo, IranianMonthOption, MonthlyBreakdownItem } from '@/lib/types';
 import { CheckCircle2, RefreshCw } from 'lucide-react';
 import { toPersianDigits } from '@/lib/date-utils';
 
 export default function CorrectedProductsPage() {
   const [items, setItems] = useState<UnifiedProduct[]>([]);
   const [availableBrands, setAvailableBrands] = useState<string[]>([]);
+  const [availableMonths, setAvailableMonths] = useState<IranianMonthOption[]>([]);
+  const [monthlyBreakdown, setMonthlyBreakdown] = useState<MonthlyBreakdownItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<{ problematicCount: number; correctedCount: number }>({
     problematicCount: 0,
@@ -21,6 +25,8 @@ export default function CorrectedProductsPage() {
   // Filter & Pagination States
   const [search, setSearch] = useState('');
   const [brand, setBrand] = useState('all');
+  const [month, setMonth] = useState('all');
+  const [year, setYear] = useState('all');
   const [hasLink, setHasLink] = useState('all');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -44,6 +50,9 @@ export default function CorrectedProductsPage() {
         const json = await res.json();
         if (json.success) {
           setStats(json.data);
+          if (json.data.monthlyBreakdown) {
+            setMonthlyBreakdown(json.data.monthlyBreakdown);
+          }
         }
       }
     } catch (e) {
@@ -60,6 +69,8 @@ export default function CorrectedProductsPage() {
       params.set('pageSize', String(pageSize));
       if (search.trim()) params.set('search', search.trim());
       if (brand && brand !== 'all') params.set('brand', brand);
+      if (month && month !== 'all') params.set('month', month);
+      if (year && year !== 'all') params.set('year', year);
       if (hasLink && hasLink !== 'all') params.set('hasLink', hasLink);
       params.set('sortBy', sortBy);
       params.set('sortOrder', sortOrder);
@@ -71,13 +82,16 @@ export default function CorrectedProductsPage() {
         setItems(json.data.items || []);
         setPagination(json.data.pagination);
         setAvailableBrands(json.data.availableBrands || []);
+        if (json.data.availableMonths) {
+          setAvailableMonths(json.data.availableMonths);
+        }
       }
     } catch (err) {
       console.error('Error loading corrected products:', err);
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, search, brand, hasLink, sortBy, sortOrder]);
+  }, [page, pageSize, search, brand, month, year, hasLink, sortBy, sortOrder]);
 
   useEffect(() => {
     fetchData();
@@ -87,6 +101,8 @@ export default function CorrectedProductsPage() {
   const handleResetFilters = () => {
     setSearch('');
     setBrand('all');
+    setMonth('all');
+    setYear('all');
     setHasLink('all');
     setSortBy('createdAt');
     setSortOrder('asc');
@@ -94,7 +110,13 @@ export default function CorrectedProductsPage() {
   };
 
   const isFiltered =
-    Boolean(search) || brand !== 'all' || hasLink !== 'all' || sortBy !== 'createdAt' || sortOrder !== 'asc';
+    Boolean(search) ||
+    brand !== 'all' ||
+    month !== 'all' ||
+    year !== 'all' ||
+    hasLink !== 'all' ||
+    sortBy !== 'createdAt' ||
+    sortOrder !== 'asc';
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -134,6 +156,33 @@ export default function CorrectedProductsPage() {
         activeType="corrected"
       />
 
+      {/* Monthly Breakdown Analytics Bar */}
+      <MonthlyStatsBar
+        monthlyBreakdown={monthlyBreakdown}
+        selectedMonth={month}
+        onSelectMonth={(m) => {
+          setMonth(m);
+          setPage(1);
+        }}
+        activeType="corrected"
+      />
+
+      {/* Iranian Month Navigation Tabs */}
+      <IranianMonthTabs
+        selectedMonth={month}
+        onSelectMonth={(m) => {
+          setMonth(m);
+          setPage(1);
+        }}
+        selectedYear={year}
+        onSelectYear={(y) => {
+          setYear(y);
+          setPage(1);
+        }}
+        availableMonths={availableMonths}
+        totalAllCount={stats.correctedCount}
+      />
+
       {/* Filter and Search Bar */}
       <FilterBar
         search={search}
@@ -144,6 +193,11 @@ export default function CorrectedProductsPage() {
         brand={brand}
         onBrandChange={(b) => {
           setBrand(b);
+          setPage(1);
+        }}
+        month={month}
+        onMonthChange={(m) => {
+          setMonth(m);
           setPage(1);
         }}
         hasLink={hasLink}
@@ -161,6 +215,7 @@ export default function CorrectedProductsPage() {
           setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))
         }
         availableBrands={availableBrands}
+        availableMonths={availableMonths}
         onReset={handleResetFilters}
         isFiltered={isFiltered}
       />

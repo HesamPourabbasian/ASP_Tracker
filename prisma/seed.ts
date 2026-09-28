@@ -14,7 +14,7 @@ async function main() {
       brand: 'CTR',
       existingSiteCode: 'CTR-58101-3FA00',
       link: 'https://example.com/product/azera-front-brake',
-      date: '1403/06/01',
+      date: '1403/04/15',
       description: 'عدم تطابق کد فنی با مدل ۲۰۱۲، نیازمند اصلاح شماره به 58101-3FA10 و بررسی ضخامت لنت.',
     },
     {
@@ -22,7 +22,7 @@ async function main() {
       brand: 'CTR',
       existingSiteCode: 'CQKH-31R',
       link: 'https://example.com/product/cerato-control-arm',
-      date: '1403/06/02',
+      date: '1403/04/28',
       description: 'بوش طبق در اطلاعات فنی سایت قید نشده است و مشتریان دچار ابهام می‌شوند.',
     },
     {
@@ -30,7 +30,7 @@ async function main() {
       brand: 'CTR',
       existingSiteCode: 'CEKH-42L',
       link: 'https://example.com/product/santafe-tie-rod',
-      date: '1403/06/03',
+      date: '1403/05/05',
       description: 'تصویر محصول در سایت با قطعه فیزیکی مغایرت دارد، نیاز به جایگزینی تصویر اصلی CTR.',
     },
     {
@@ -38,7 +38,7 @@ async function main() {
       brand: 'Genuine',
       existingSiteCode: '48820-02040',
       link: 'https://example.com/product/corolla-link',
-      date: '1403/06/04',
+      date: '1403/05/18',
       description: 'شماره فنی موجود در سایت ناقص درج شده و مدل‌های ۲۰۱۴ به بعد را پوشش نداده است.',
     },
     {
@@ -54,7 +54,7 @@ async function main() {
       brand: 'Genuine',
       existingSiteCode: '26300-35505',
       link: 'https://example.com/product/optima-oil-filter',
-      date: '1403/06/06',
+      date: '1403/06/12',
       description: 'توضیحات کاتالوگ مربوط به مدل ۴ سیلندر ۲۴۰۰ سی‌سی است ولی در سایت ۶ سیلندر درج شده.',
     },
     {
@@ -62,7 +62,7 @@ async function main() {
       brand: 'CTR',
       existingSiteCode: '43200-1533R',
       link: 'https://example.com/product/talisman-rear-disc',
-      date: '1403/06/07',
+      date: '1403/06/24',
       description: 'مشخصات فنی شامل قطر خارجی ۲۹۰ میلی‌متر و بلبرینگ سر خود در جدول ویژگی‌ها نیامده است.',
     },
     {
@@ -70,7 +70,7 @@ async function main() {
       brand: 'CTR',
       existingSiteCode: '04466-60140',
       link: 'https://example.com/product/landcruiser-rear-brake',
-      date: '1403/06/08',
+      date: '1403/07/04',
       description: 'کد بارکد کالا در سامانه اشتباه تایپ شده و با لیبل روی جعبه همخوانی ندارد.',
     },
     {
@@ -78,7 +78,7 @@ async function main() {
       brand: 'CTR',
       existingSiteCode: 'BBM2-34-300',
       link: 'https://example.com/product/mazda3-ball-joint',
-      date: '1403/06/09',
+      date: '1403/07/16',
       description: 'سازگاری با مزدا ۳ نیو در توضیحات ذکر نشده است در صورتی که قطعه مشترک است.',
     },
     {
@@ -86,7 +86,7 @@ async function main() {
       brand: 'Dongil',
       existingSiteCode: '6PK1565',
       link: 'https://example.com/product/206-belt',
-      date: '1403/06/10',
+      date: '1403/08/02',
       description: 'سایز تسمه در عنوان ۶PK۱۵۶۰ خورده ولی در مشخصات ۶PK۱۵۶۵ است، نیاز به یکپارچه‌سازی.',
     },
     {
@@ -94,7 +94,7 @@ async function main() {
       brand: 'CTR',
       existingSiteCode: '54651-2S000',
       link: 'https://example.com/product/sportage-front-shock',
-      date: '1403/06/11',
+      date: '1403/08/11',
       description: 'زاویه پایه نگهدارنده سنسور ABS با مدل ۲۰۱۴ بررسی شود، ممکن است پارت نامبر متفاوتی باشد.',
     },
     {
@@ -102,7 +102,7 @@ async function main() {
       brand: 'Genuine',
       existingSiteCode: '302010-EF7',
       link: null,
-      date: '1403/06/12',
+      date: '1403/08/25',
       description: 'مقاومت اهمی وایرها در جدول مشخصات وارد نشده است.',
     },
   ];
@@ -113,7 +113,7 @@ async function main() {
       brand: 'CTR',
       correctedSiteCode: 'CTR-04465-33471',
       link: 'https://example.com/product/camry-front-brake',
-      date: '1403/05/20',
+      date: '1403/04/18',
       description: 'اصلاح کد فنی و ثبت کامل سازگاری با مدل‌های ۲۰۰۷ تا ۲۰۱۱ به همراه افزودن راهنمای نصب.',
     },
     {
@@ -121,7 +121,7 @@ async function main() {
       brand: 'CTR',
       correctedSiteCode: 'CEKH-39R',
       link: 'https://example.com/product/optima-jf-tie-rod',
-      date: '1403/05/22',
+      date: '1403/05/12',
       description: 'اصلاح عنوان کالا و قرار دادن جدول سازگاری دقیق با سراتو و اپتیما.',
     },
     {
@@ -137,7 +137,7 @@ async function main() {
       brand: 'Genuine',
       correctedSiteCode: '54613-2Y001',
       link: 'https://example.com/product/maxima-stabilizer-bush',
-      date: '1403/05/28',
+      date: '1403/06/08',
       description: 'اصلاح سایز میله موجگیر از ۲۲ به ۲۴ میلی‌متر و ویرایش نام تجاری کالا.',
     },
     {
@@ -145,8 +145,24 @@ async function main() {
       brand: 'Bosch',
       correctedSiteCode: 'FR7DC-PLUS',
       link: 'https://example.com/product/bosch-spark-plug',
-      date: '1403/06/01',
+      date: '1403/06/20',
       description: 'فیلر دهانه شمع به ۰.۹ میلی‌متر تصحیح شد و شماره آچار به ۱۶ تغییر یافت.',
+    },
+    {
+      productName: 'واتر پمپ پژو ۴۰۵ و پارس XU7',
+      brand: 'CTR',
+      correctedSiteCode: 'CTR-WP-405',
+      link: 'https://example.com/product/405-water-pump',
+      date: '1403/07/11',
+      description: 'کد کاتالوگ تصحیح گردید و واشر آب‌بندی در اقلام همراه ثبت شد.',
+    },
+    {
+      productName: 'سنسور اکسیژن بالا رنو مگان ۲۰۰۰',
+      brand: 'Bosch',
+      correctedSiteCode: '0258006046',
+      link: 'https://example.com/product/megane-o2-sensor',
+      date: '1403/08/05',
+      description: 'طول سوکت و سیم بررسی و کد تطبیقی بوش آلمان در فیلد اختصاصی وارد گردید.',
     },
   ];
 

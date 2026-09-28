@@ -4,7 +4,7 @@ import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Printer, ArrowRight, Loader2, FileSpreadsheet, ExternalLink } from 'lucide-react';
 import { UnifiedProduct, ProductType } from '@/lib/types';
-import { toPersianDigits, getTodayJalali, formatJalaliHumanReadable } from '@/lib/date-utils';
+import { toPersianDigits, getTodayJalali, formatJalaliHumanReadable, getIranianMonthName } from '@/lib/date-utils';
 
 function PrintContent() {
   const router = useRouter();
@@ -12,6 +12,8 @@ function PrintContent() {
 
   const type = (searchParams.get('type') || 'problematic') as ProductType;
   const mode = searchParams.get('mode') || 'all';
+  const month = searchParams.get('month');
+  const year = searchParams.get('year');
   const fromRow = searchParams.get('fromRow');
   const toRow = searchParams.get('toRow');
   const ids = searchParams.get('ids');
@@ -43,6 +45,12 @@ function PrintContent() {
         if (mode === 'range' && fromRow && toRow) {
           url += `&fromRow=${fromRow}&toRow=${toRow}`;
         }
+        if (month) {
+          url += `&month=${month}`;
+        }
+        if (year) {
+          url += `&year=${year}`;
+        }
 
         const res = await fetch(url);
         const json = await res.json();
@@ -65,13 +73,17 @@ function PrintContent() {
     };
 
     fetchData();
-  }, [type, mode, fromRow, toRow, ids]);
+  }, [type, mode, month, year, fromRow, toRow, ids]);
 
   const handlePrint = () => {
     window.print();
   };
 
   const getRangeLabel = () => {
+    if (month) {
+      const mName = getIranianMonthName(month);
+      return `تفکیک ماه ${mName} (${toPersianDigits(items.length)} ردیف)`;
+    }
     if (mode === 'range' && fromRow && toRow) {
       return `شماره ${toPersianDigits(fromRow)} تا ${toPersianDigits(toRow)}`;
     }

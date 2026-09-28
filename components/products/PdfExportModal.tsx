@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Printer, FileDown, CheckCircle, Sliders, Hash } from 'lucide-react';
 import { ProductType } from '@/lib/types';
-import { toPersianDigits } from '@/lib/date-utils';
+import { toPersianDigits, PERSIAN_MONTH_DETAILS, getCurrentJalaliMonth } from '@/lib/date-utils';
 
 interface PdfExportModalProps {
   isOpen: boolean;
@@ -22,9 +22,10 @@ export default function PdfExportModal({
   selectedCount,
   selectedIds,
 }: PdfExportModalProps) {
-  const [exportMode, setExportMode] = useState<'range' | 'selected' | 'all'>('range');
+  const [exportMode, setExportMode] = useState<'range' | 'selected' | 'all' | 'month'>('range');
   const [fromRow, setFromRow] = useState<string>('1');
   const [toRow, setToRow] = useState<string>('20');
+  const [selectedMonth, setSelectedMonth] = useState<string>('06');
 
   useEffect(() => {
     if (isOpen) {
@@ -35,6 +36,7 @@ export default function PdfExportModal({
       }
       setFromRow('1');
       setToRow(String(Math.min(20, Math.max(1, totalTableItems))));
+      setSelectedMonth(getCurrentJalaliMonth());
     }
   }, [isOpen, selectedCount, totalTableItems]);
 
@@ -52,6 +54,8 @@ export default function PdfExportModal({
       url += `&fromRow=${start}&toRow=${end}`;
     } else if (exportMode === 'selected') {
       url += `&ids=${selectedIds.join(',')}`;
+    } else if (exportMode === 'month') {
+      url += `&month=${selectedMonth}`;
     }
 
     // Open print page in a new window/tab
@@ -177,6 +181,48 @@ export default function PdfExportModal({
                     ? `${toPersianDigits(selectedCount)} کالا در جدول انتخاب شده است.`
                     : 'هیچ کالایی با تیک انتخاب نشده است.'}
                 </span>
+              </div>
+            </label>
+
+            {/* Option: Iranian Month */}
+            <label
+              className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
+                exportMode === 'month'
+                  ? 'border-red-600 bg-red-50/40 ring-2 ring-red-600/10'
+                  : 'border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              <input
+                type="radio"
+                name="exportMode"
+                checked={exportMode === 'month'}
+                onChange={() => setExportMode('month')}
+                className="mt-1 text-red-600 focus:ring-red-500"
+              />
+              <div className="flex-1">
+                <span className="font-bold text-sm text-slate-900 block">
+                  خروجی تفکیک‌شده بر اساس ماه شمسی
+                </span>
+                <span className="text-xs text-slate-500">
+                  چاپ گزارش تمامی کالاهای ثبت شده در یک ماه خاص از تقویم خورشیدی
+                </span>
+
+                {exportMode === 'month' && (
+                  <div className="mt-3 pt-3 border-t border-red-100 flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-700">انتخاب ماه:</span>
+                    <select
+                      value={selectedMonth}
+                      onChange={(e) => setSelectedMonth(e.target.value)}
+                      className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold text-slate-800 text-xs focus:border-red-600 bg-white"
+                    >
+                      {PERSIAN_MONTH_DETAILS.map((m) => (
+                        <option key={m.key} value={m.key}>
+                          {m.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
             </label>
 
