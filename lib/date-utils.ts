@@ -1,6 +1,6 @@
 import * as jalaali from 'jalaali-js';
 
-const PERSIAN_MONTHS = [
+export const PERSIAN_MONTHS = [
   'فروردین',
   'اردیبهشت',
   'خرداد',
@@ -13,6 +13,29 @@ const PERSIAN_MONTHS = [
   'دی',
   'بهمن',
   'اسفند',
+] as const;
+
+export interface PersianMonthDetail {
+  number: number;
+  key: string;
+  name: string;
+  season: 'بهار' | 'تابستان' | 'پاییز' | 'زمستان';
+  days: number;
+}
+
+export const PERSIAN_MONTH_DETAILS: PersianMonthDetail[] = [
+  { number: 1, key: '01', name: 'فروردین', season: 'بهار', days: 31 },
+  { number: 2, key: '02', name: 'اردیبهشت', season: 'بهار', days: 31 },
+  { number: 3, key: '03', name: 'خرداد', season: 'بهار', days: 31 },
+  { number: 4, key: '04', name: 'تیر', season: 'تابستان', days: 31 },
+  { number: 5, key: '05', name: 'مرداد', season: 'تابستان', days: 31 },
+  { number: 6, key: '06', name: 'شهریور', season: 'تابستان', days: 31 },
+  { number: 7, key: '07', name: 'مهر', season: 'پاییز', days: 30 },
+  { number: 8, key: '08', name: 'آبان', season: 'پاییز', days: 30 },
+  { number: 9, key: '09', name: 'آذر', season: 'پاییز', days: 30 },
+  { number: 10, key: '10', name: 'دی', season: 'زمستان', days: 30 },
+  { number: 11, key: '11', name: 'بهمن', season: 'زمستان', days: 30 },
+  { number: 12, key: '12', name: 'اسفند', season: 'زمستان', days: 29 },
 ];
 
 const PERSIAN_DIGITS = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -105,4 +128,140 @@ export function normalizeJalaliDate(jalaliStr: string): string {
     return `${y}/${m}/${d}`;
   }
   return jalaliStr;
+}
+
+/**
+ * Get Iranian month name by month number (1-12) or two-digit string ("01"-"12")
+ */
+export function getIranianMonthName(month: number | string): string {
+  const m = typeof month === 'string' ? parseInt(toEnglishDigits(month), 10) : month;
+  if (isNaN(m) || m < 1 || m > 12) return '';
+  return PERSIAN_MONTHS[m - 1];
+}
+
+/**
+ * Extract Jalali year and month from a date string (YYYY/MM/DD)
+ */
+export function extractJalaliYearMonth(dateStr: string): {
+  year: string;
+  month: string;
+  monthNumber: number;
+  monthName: string;
+  yearMonthKey: string;
+  label: string;
+} | null {
+  if (!dateStr) return null;
+  const normalized = normalizeJalaliDate(dateStr);
+  const parts = toEnglishDigits(normalized).split('/');
+  if (parts.length < 2) return null;
+
+  const year = parts[0];
+  const monthNum = parseInt(parts[1], 10);
+  if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) return null;
+
+  const month = String(monthNum).padStart(2, '0');
+  const monthName = PERSIAN_MONTHS[monthNum - 1];
+  const yearMonthKey = `${year}/${month}`;
+  const label = `${monthName} ${toPersianDigits(year)}`;
+
+  return {
+    year,
+    month,
+    monthNumber: monthNum,
+    monthName,
+    yearMonthKey,
+    label,
+  };
+}
+
+/**
+ * Get current Jalali year as string (e.g. "1403")
+ */
+export function getCurrentJalaliYear(): string {
+  const now = new Date();
+  const j = jalaali.toJalaali(now);
+  return String(j.jy);
+}
+
+/**
+ * Get current Jalali month as two-digit string (e.g. "07")
+ */
+export function getCurrentJalaliMonth(): string {
+  const now = new Date();
+  const j = jalaali.toJalaali(now);
+  return String(j.jm).padStart(2, '0');
+}
+
+/**
+ * Get start and end dates for an Iranian month
+ */
+export function getJalaliMonthRange(year: string | number, month: string | number): { start: string; end: string } {
+  const y = String(year);
+  const mNum = typeof month === 'string' ? parseInt(toEnglishDigits(month), 10) : month;
+  const mStr = String(mNum).padStart(2, '0');
+  const daysInMonth = mNum <= 6 ? 31 : mNum <= 11 ? 30 : 29;
+  return {
+    start: `${y}/${mStr}/01`,
+    end: `${y}/${mStr}/${String(daysInMonth).padStart(2, '0')}`,
+  };
+}
+
+export interface GroupedIranianMonthTracks<T> {
+  year: string;
+  month: string;
+  monthNumber: number;
+  monthName: string;
+  yearMonthKey: string;
+  label: string;
+  items: T[];
+  count: number;
+}
+
+/**
+ * Group an array of tracks (or any items with a Jalali date property) by Iranian month
+ */
+export function groupTracksByIranianMonth<T extends { date: string }>(
+  items: T[],
+  order: 'asc' | 'desc' = 'desc'
+): GroupedIranianMonthTracks<T>[] {
+  const groupsMap = new Map<string, GroupedIranianMonthTracks<T>>();
+
+  for (const item of items) {
+    const ym = extractJalaliYearMonth(item.date);
+    const key = ym ? ym.yearMonthKey : 'unknown';
+    const label = ym ? ym.label : 'تاریخ نامشخص';
+    const year = ym ? ym.year : '0';
+    const month = ym ? ym.month : '00';
+    const monthNumber = ym ? ym.monthNumber : 0;
+    const monthName = ym ? ym.monthName : 'نامشخص';
+
+    if (!groupsMap.has(key)) {
+      groupsMap.set(key, {
+        year,
+        month,
+        monthNumber,
+        monthName,
+        yearMonthKey: key,
+        label,
+        items: [],
+        count: 0,
+      });
+    }
+
+    const group = groupsMap.get(key)!;
+    group.items.push(item);
+    group.count += 1;
+  }
+
+  const result = Array.from(groupsMap.values());
+
+  result.sort((a, b) => {
+    if (a.yearMonthKey === 'unknown') return 1;
+    if (b.yearMonthKey === 'unknown') return -1;
+    return order === 'desc'
+      ? b.yearMonthKey.localeCompare(a.yearMonthKey)
+      : a.yearMonthKey.localeCompare(b.yearMonthKey);
+  });
+
+  return result;
 }
