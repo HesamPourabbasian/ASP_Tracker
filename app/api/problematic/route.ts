@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { productFormSchema, bulkDeleteSchema } from '@/lib/validations';
-import { normalizeJalaliDate, toEnglishDigits } from '@/lib/date-utils';
+import { normalizeJalaliDate, toEnglishDigits, extractJalaliYearMonth } from '@/lib/date-utils';
+import { IranianMonthOption } from '@/lib/types';
 import { Prisma } from '@prisma/client';
 
 export async function GET(request: Request) {
@@ -9,6 +10,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search')?.trim() || '';
     const brand = searchParams.get('brand')?.trim() || '';
+    const month = searchParams.get('month')?.trim() || '';
+    const year = searchParams.get('year')?.trim() || '';
     const hasLink = searchParams.get('hasLink') || 'all';
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = (searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc') as 'asc' | 'desc';
@@ -39,6 +42,26 @@ export async function GET(request: Request) {
 
     if (brand && brand !== 'all') {
       where.brand = { equals: brand, mode: 'insensitive' };
+    }
+
+    if (month && month !== 'all') {
+      const normalizedMonth = toEnglishDigits(month);
+      if (normalizedMonth.includes('/')) {
+        where.date = { startsWith: normalizedMonth };
+      } else {
+        const monthNum = parseInt(normalizedMonth, 10);
+        if (!isNaN(monthNum) && monthNum >= 1 && monthNum <= 12) {
+          const mStr = String(monthNum).padStart(2, '0');
+          if (year && year !== 'all') {
+            const yStr = toEnglishDigits(year);
+            where.date = { startsWith: `${yStr}/${mStr}` };
+          } else {
+            where.date = { contains: `/${mStr}/` };
+          }
+        }
+      }
+    } else if (year && year !== 'all') {
+      where.date = { startsWith: `${toEnglishDigits(year)}/` };
     }
 
     if (hasLink === 'true') {
@@ -76,7 +99,7 @@ export async function GET(request: Request) {
       take = toRow - fromRow + 1;
     }
 
-    const [items, distinctBrands] = await Promise.all([
+    const [items, distinctBrands, allDates] = await Promise.all([
       prisma.problematicProduct.findMany({
         where,
         orderBy,
@@ -88,11 +111,42 @@ export async function GET(request: Request) {
         distinct: ['brand'],
         orderBy: { brand: 'asc' },
       }),
+      prisma.problematicProduct.findMany({
+        select: { date: true },
+      }),
     ]);
 
     const availableBrands = distinctBrands
       .map((b) => b.brand.trim())
       .filter((b) => b.length > 0);
+
+    const monthCounts = new Map<string, { year: string; month: string; monthNumber: number; monthName: string; label: string; count: number }>();
+    for (const row of allDates) {
+      const ym = extractJalaliYearMonth(row.date);
+      if (ym) {
+        const existing = monthCounts.get(ym.yearMonthKey) || {
+          year: ym.year,
+          month: ym.month,
+          monthNumber: ym.monthNumber,
+          monthName: ym.monthName,
+          label: ym.label,
+          count: 0,
+        };
+        existing.count += 1;
+        monthCounts.set(ym.yearMonthKey, existing);
+      }
+    }
+
+    const availableMonths: IranianMonthOption[] = Array.from(monthCounts.entries())
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .map(([_, val]) => ({
+        key: val.month,
+        monthNumber: val.monthNumber,
+        monthName: val.monthName,
+        year: val.year,
+        label: val.label,
+        count: val.count,
+      }));
 
     const startRowNumber = (fromRowParam && toRowParam)
       ? Math.max(1, parseInt(fromRowParam, 10))
@@ -126,6 +180,7 @@ export async function GET(request: Request) {
           hasPrevPage: page > 1,
         },
         availableBrands,
+        availableMonths,
       },
     });
   } catch (error) {
