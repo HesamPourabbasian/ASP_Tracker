@@ -429,10 +429,9 @@ function PrintContent() {
             <thead>
               <tr className="bg-red-600 text-white font-bold text-[11px]">
                 <th className="border border-slate-300 p-2 text-center w-12">شماره</th>
-                <th className="border border-slate-300 p-2 text-right w-44">نام محصول</th>
-                <th className="border border-slate-300 p-2 text-right w-24">برند</th>
+                <th className="border border-slate-300 p-2 text-right w-48">نام محصول</th>
+                <th className="border border-slate-300 p-2 text-right w-28">برند</th>
                 <th className="border border-slate-300 p-2 text-right w-36">{siteCodeHeader}</th>
-                <th className="border border-slate-300 p-2 text-center w-28">لینک</th>
                 <th className="border border-slate-300 p-2 text-center w-24">تاریخ</th>
                 <th className="border border-slate-300 p-2 text-right">توضیحات کامل</th>
               </tr>
@@ -456,15 +455,6 @@ function PrintContent() {
                   </td>
                   <td className="border border-slate-300 p-2 font-mono font-bold text-slate-800 text-left" dir="ltr">
                     {item.siteCode}
-                  </td>
-                  <td className="border border-slate-300 p-2 text-center text-[10px]">
-                    {item.link ? (
-                      <span className="text-red-700 underline break-all" dir="ltr">
-                        {item.link.length > 25 ? `${item.link.substring(0, 25)}...` : item.link}
-                      </span>
-                    ) : (
-                      <span className="text-slate-400">-</span>
-                    )}
                   </td>
                   <td className="border border-slate-300 p-2 text-center font-medium text-slate-800 whitespace-nowrap">
                     {toPersianDigits(item.date)}
