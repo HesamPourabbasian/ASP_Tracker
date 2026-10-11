@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Printer, ArrowRight, Loader2, Leaf, TableProperties, Pencil } from 'lucide-react';
 import { UnifiedProduct, ProductType } from '@/lib/types';
 import {
@@ -13,7 +13,6 @@ import {
 } from '@/lib/date-utils';
 
 function PrintContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const type = (searchParams.get('type') || 'problematic') as ProductType;
@@ -27,8 +26,11 @@ function PrintContent() {
 
   const [items, setItems] = useState<UnifiedProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const [printDate, setPrintDate] = useState<string>('');
-  const [printTime, setPrintTime] = useState<string>('');
+  const [printDate] = useState<string>(() => getTodayJalali());
+  const [printTime] = useState<string>(() => {
+    const now = new Date();
+    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  });
 
   // Paper saver mode: defaults to true if month is set or paperSaverParam === 'true'
   const [paperSaver, setPaperSaver] = useState<boolean>(() => {
@@ -43,12 +45,6 @@ function PrintContent() {
     type === 'problematic' ? 'کد موجود در سایت' : 'کد اصلاح شده سایت';
 
   useEffect(() => {
-    // Set Jalali print timestamp
-    const now = new Date();
-    setPrintDate(getTodayJalali());
-    setPrintTime(
-      `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
-    );
 
     const fetchData = async () => {
       setLoading(true);
