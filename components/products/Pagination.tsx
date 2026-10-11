@@ -146,6 +146,8 @@ export default function Pagination({
           <option value={20}>۲۰ سطر</option>
           <option value={50}>۵۰ سطر</option>
           <option value={100}>۱۰۰ سطر</option>
+          <option value={300}>۳۰۰ سطر</option>
+          <option value={600}>۶۰۰ سطر</option>
         </select>
       </div>
     </div>
