@@ -122,14 +122,14 @@ export default function CorrectedProductsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-600/10 border border-emerald-600/20 text-emerald-600 flex items-center justify-center shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-950/50">
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               تصحیح شده توسط من
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-400 font-medium mt-0.5">
               آرشیو قطعات و اقلامی که کدهای فنی آنها با موفقیت بازبینی و اصلاح شده‌اند
             </p>
           </div>
@@ -137,10 +137,10 @@ export default function CorrectedProductsPage() {
 
         <button
           onClick={onRefresh}
-          className="self-start sm:self-auto flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-bold transition-all shadow-2xs hover:bg-slate-50 cursor-pointer"
+          className="self-start sm:self-auto flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 hover:bg-slate-800 text-slate-200 text-xs font-bold transition-all shadow-xs cursor-pointer"
           title="بروزرسانی جدول"
         >
-          <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 text-emerald-400 ${loading ? 'animate-spin' : ''}`} />
           <span>بروزرسانی داده‌ها</span>
         </button>
       </div>

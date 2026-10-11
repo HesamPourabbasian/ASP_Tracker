@@ -151,11 +151,13 @@ export function calculateSalaryReport(
   const totalRials = totalTomans * 10;
   const totalWords = numberToPersianWords(totalTomans);
 
-  // Compute percentages
-  const items: MonthlySalaryItem[] = rawItems.map((item) => ({
-    ...item,
-    percentage: totalTomans > 0 ? Math.round((item.totalTomans / totalTomans) * 100) : 0,
-  }));
+  // Compute percentages and filter out months with 0 items
+  const items: MonthlySalaryItem[] = rawItems
+    .filter((item) => item.count > 0)
+    .map((item) => ({
+      ...item,
+      percentage: totalTomans > 0 ? Math.round((item.totalTomans / totalTomans) * 100) : 0,
+    }));
 
   // Sort descending by yearMonthKey
   items.sort((a, b) => b.yearMonthKey.localeCompare(a.yearMonthKey));

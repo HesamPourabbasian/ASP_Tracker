@@ -71,28 +71,28 @@ export default function Header() {
   const isCorrectedActive = pathname === '/corrected';
 
   return (
-    <header className="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs transition-all duration-200">
-      {/* Top CTR Accent Red Line */}
-      <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-red-700 w-full" />
+    <header className="bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-40 shadow-md shadow-black/20 transition-all duration-200">
+      {/* Top CTR Accent Red Line with Glow */}
+      <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-red-700 w-full shadow-[0_0_12px_rgba(239,68,68,0.4)]" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18">
           {/* Logo and Brand */}
           <div className="flex items-center gap-3">
             <Link href="/problematic" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center font-black text-xl shadow-md shadow-red-600/20 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-700 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-red-600/30 group-hover:shadow-red-600/50 group-hover:scale-105 transition-all">
                 ASP
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-xl tracking-tight text-slate-900">
-                    ASP <span className="text-red-600">Tracker</span>
+                  <span className="font-extrabold text-xl tracking-tight text-white">
+                    ASP <span className="text-red-500 font-black">Tracker</span>
                   </span>
-                  <span className="bg-red-50 text-red-700 border border-red-200 text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
+                  <span className="bg-red-950/70 text-red-300 border border-red-800/60 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
                     CTR Aftermarket
                   </span>
                 </div>
-                <span className="text-xs text-slate-500 font-medium hidden sm:inline">
+                <span className="text-xs text-slate-400 font-medium hidden sm:inline">
                   سامانه مدیریت و پیگیری کالاهای سایت
                 </span>
               </div>
@@ -100,23 +100,23 @@ export default function Header() {
           </div>
 
           {/* Main Navigation Tabs */}
-          <nav className="flex items-center gap-2 sm:gap-4">
+          <nav className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/problematic"
-              className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
+              className={`flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
                 isProblematicActive
-                  ? 'bg-red-600 text-white shadow-md shadow-red-600/20 ring-2 ring-red-600/20'
-                  : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'
+                  ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-600/25 ring-1 ring-red-500/50 font-black'
+                  : 'bg-slate-900/70 text-slate-300 hover:bg-slate-850 hover:text-white border border-slate-800'
               }`}
             >
-              <AlertOctagon className={`w-4 h-4 ${isProblematicActive ? 'text-white' : 'text-red-600'}`} />
+              <AlertOctagon className={`w-4 h-4 ${isProblematicActive ? 'text-white' : 'text-red-400'}`} />
               <span>کالاهای مشکل‌دار</span>
               {stats !== null && (
                 <span
                   className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                     isProblematicActive
-                      ? 'bg-white text-red-700'
-                      : 'bg-red-100 text-red-700'
+                      ? 'bg-white/20 text-white font-black'
+                      : 'bg-red-950/80 text-red-300 border border-red-800/60'
                   }`}
                 >
                   {toPersianDigits(stats.problematicCount)}
@@ -126,20 +126,20 @@ export default function Header() {
 
             <Link
               href="/corrected"
-              className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
+              className={`flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
                 isCorrectedActive
-                  ? 'bg-red-600 text-white shadow-md shadow-red-600/20 ring-2 ring-red-600/20'
-                  : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'
+                  ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg shadow-emerald-600/25 ring-1 ring-emerald-500/50 font-black'
+                  : 'bg-slate-900/70 text-slate-300 hover:bg-slate-850 hover:text-white border border-slate-800'
               }`}
             >
-              <CheckCircle2 className={`w-4 h-4 ${isCorrectedActive ? 'text-white' : 'text-emerald-600'}`} />
+              <CheckCircle2 className={`w-4 h-4 ${isCorrectedActive ? 'text-white' : 'text-emerald-400'}`} />
               <span>تصحیح شده توسط من</span>
               {stats !== null && (
                 <span
                   className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                     isCorrectedActive
-                      ? 'bg-white text-red-700'
-                      : 'bg-slate-200 text-slate-800'
+                      ? 'bg-white/20 text-white font-black'
+                      : 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/60'
                   }`}
                 >
                   {toPersianDigits(stats.correctedCount)}
@@ -151,16 +151,16 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setIsSalaryModalOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl font-bold text-sm bg-amber-50 hover:bg-amber-100/90 text-amber-950 border border-amber-200/90 transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs group"
-              title="محاسبه حقوق و دستمزد ماهانه بر مبنای هر ترک ۴۵,۰۰۰ تومان"
+              className="flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-amber-950/40 to-amber-900/30 hover:from-amber-900/50 hover:to-amber-800/40 text-amber-300 border border-amber-800/60 hover:border-amber-700/80 transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md group"
+              title={`محاسبه حقوق و دستمزد ماهانه بر مبنای هر ترک ${toPersianDigits(formatWithCommas(salaryRate))} تومان`}
             >
-              <div className="w-5 h-5 rounded-lg bg-amber-500/20 text-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-5 h-5 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Wallet className="w-3.5 h-3.5" />
               </div>
               <span className="hidden sm:inline">محاسبه حقوق</span>
               <span className="sm:hidden">حقوق</span>
               {stats !== null && (
-                <span className="text-[11px] px-2 py-0.5 rounded-full font-black bg-amber-200/80 text-amber-950">
+                <span className="text-[11px] px-2 py-0.5 rounded-full font-black bg-amber-500/20 text-amber-200 border border-amber-500/30">
                   {toPersianDigits(formatWithCommas(stats.correctedCount * salaryRate))} ت
                 </span>
               )}
@@ -174,7 +174,7 @@ export default function Header() {
         isOpen={isSalaryModalOpen}
         onClose={() => setIsSalaryModalOpen(false)}
         monthlyBreakdown={stats?.monthlyBreakdown}
-        defaultType="corrected"
+        defaultType={isProblematicActive ? 'problematic' : 'corrected'}
       />
     </header>
   );

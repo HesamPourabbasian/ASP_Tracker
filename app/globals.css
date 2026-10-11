@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --primary-red: #dc2626;
-  --primary-red-hover: #b91c1c;
+  --background: #090d16;
+  --foreground: #f1f5f9;
+  --primary-red: #ef4444;
+  --primary-red-hover: #dc2626;
 }
 
 body {
@@ -40,7 +40,7 @@ body {
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -50,10 +50,10 @@ body {
 
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.2);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
   }
 }
 
@@ -82,18 +82,19 @@ body {
   animation: pulseGlow 2.5s infinite;
 }
 
-/* Glassmorphism & Modern Card Styling */
+/* Glassmorphism & Modern Card Styling for Dark Theme */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-modal {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(13, 19, 33, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Modern Card Hover Effects */
@@ -102,25 +103,25 @@ body {
 }
 .interactive-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-/* Custom modern scrollbar */
+/* Custom modern dark scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   height: 6px;
   width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: rgba(15, 23, 42, 0.6);
   border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(71, 85, 105, 0.6);
   border-radius: 9999px;
   transition: background 0.2s ease;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(148, 163, 184, 0.8);
 }
 
 /* Print specific styles */
@@ -218,4 +219,40 @@ body {
     padding: 2px 3px !important;
     font-size: 7.5pt !important;
   }
+
+  /* Salary Slip Official Print Styles */
+  body.printing-salary-slip > *:not(#salary-modal-portal) {
+    display: none !important;
+  }
+
+  body.printing-salary-slip #salary-modal-portal {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  body.printing-salary-slip #salary-modal-portal .no-print {
+    display: none !important;
+  }
+
+  body.printing-salary-slip #salary-modal-portal .salary-slip-sheet {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
+
+/* Hide salary print slip on screen */
+.salary-slip-sheet {
+  display: none;
+}
+

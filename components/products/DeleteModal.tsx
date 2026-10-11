@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Trash2, AlertTriangle, AlertOctagon, Loader2 } from 'lucide-react';
 import { UnifiedProduct, ProductType } from '@/lib/types';
 import { toPersianDigits } from '@/lib/date-utils';
@@ -34,6 +34,16 @@ export default function DeleteModal({
   const [toRow, setToRow] = useState<string>(() => String(Math.min(10, Math.max(1, totalTableItems))));
   const [confirmAllChecked, setConfirmAllChecked] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isDeleting) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, isDeleting]);
 
   if (!isOpen) return null;
 
@@ -124,28 +134,34 @@ export default function DeleteModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl border border-red-200 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+    <div
+      onClick={() => !isDeleting && onClose()}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-slate-900 rounded-2xl shadow-2xl border border-red-900/50 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200"
+      >
         {/* Header */}
-        <div className="bg-red-600 text-white px-6 py-4 flex items-center justify-between">
+        <div className="bg-slate-950 text-white px-6 py-4.5 flex items-center justify-between border-b border-red-900/60">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-white/20 text-white">
+            <div className="p-2 rounded-xl bg-red-950/80 text-red-400 border border-red-800/60 shadow-inner">
               <Trash2 className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-base sm:text-lg">
+              <h3 className="font-bold text-base sm:text-lg text-white">
                 {mode === 'single' && 'تایید حذف کالا'}
                 {mode === 'selected' && 'حذف کالاهای انتخاب‌شده'}
                 {mode === 'range' && 'حذف بازه‌ای از کالاها'}
                 {mode === 'all' && 'حذف تمام کالاها (هشدار جدی)'}
               </h3>
-              <p className="text-xs text-red-100">عملیات حذف از پایگاه‌داده</p>
+              <p className="text-xs text-red-300">عملیات حذف از پایگاه‌داده</p>
             </div>
           </div>
           <button
             onClick={onClose}
             disabled={isDeleting}
-            className="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
             aria-label="بستن"
           >
             <X className="w-5 h-5" />
@@ -156,27 +172,27 @@ export default function DeleteModal({
         <div className="p-6 space-y-4">
           {mode === 'single' && productToDelete && (
             <div>
-              <p className="text-sm text-slate-700 leading-relaxed mb-3">
+              <p className="text-sm text-slate-300 leading-relaxed mb-3">
                 آیا از حذف کالای زیر مطمئن هستید؟
               </p>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2 text-sm">
+              <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-4 space-y-2.5 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-medium">شماره ردیف:</span>
-                  <span className="font-bold text-slate-900">
+                  <span className="text-slate-400 font-medium">شماره ردیف:</span>
+                  <span className="font-bold text-white font-mono">
                     {toPersianDigits(productToDelete.rowNumber)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-medium">نام محصول:</span>
-                  <span className="font-bold text-slate-900">{productToDelete.productName}</span>
+                  <span className="text-slate-400 font-medium">نام محصول:</span>
+                  <span className="font-bold text-white">{productToDelete.productName}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-medium">برند:</span>
-                  <span className="font-semibold text-slate-800">{productToDelete.brand}</span>
+                  <span className="text-slate-400 font-medium">برند:</span>
+                  <span className="font-semibold text-slate-200">{productToDelete.brand}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-medium">کد سایت:</span>
-                  <span className="font-mono font-semibold text-slate-800">{productToDelete.siteCode}</span>
+                  <span className="text-slate-400 font-medium">کد سایت:</span>
+                  <span className="font-mono font-semibold text-red-300 bg-red-950/40 px-2 py-0.5 rounded border border-red-900/40">{productToDelete.siteCode}</span>
                 </div>
               </div>
             </div>
@@ -184,10 +200,10 @@ export default function DeleteModal({
 
           {mode === 'selected' && (
             <div>
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 mb-4">
-                <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0" />
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-950/40 border border-amber-800/60 text-amber-200 mb-4">
+                <AlertTriangle className="w-6 h-6 text-amber-400 shrink-0" />
                 <p className="text-sm font-medium leading-relaxed">
-                  تعداد <strong className="font-black text-red-600">{toPersianDigits(selectedIds.length)}</strong> کالا انتخاب شده است. آیا می‌خواهید این موارد برای همیشه حذف شوند؟
+                  تعداد <strong className="font-black text-red-400">{toPersianDigits(selectedIds.length)}</strong> کالا انتخاب شده است. آیا می‌خواهید این موارد برای همیشه حذف شوند؟
                 </p>
               </div>
             </div>
@@ -195,13 +211,13 @@ export default function DeleteModal({
 
           {mode === 'range' && (
             <div className="space-y-4">
-              <p className="text-sm text-slate-700 leading-relaxed">
+              <p className="text-sm text-slate-300 leading-relaxed">
                 بازه ردیف‌های مدنظر جهت حذف را مشخص نمایید:
               </p>
 
-              <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div className="grid grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
                     از شماره ردیف:
                   </label>
                   <input
@@ -210,12 +226,12 @@ export default function DeleteModal({
                     value={fromRow}
                     onChange={(e) => setFromRow(e.target.value)}
                     dir="ltr"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-red-600 focus:outline-hidden font-bold text-center"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-slate-800 text-white focus:border-red-500 focus:outline-hidden font-bold text-center"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
                     تا شماره ردیف:
                   </label>
                   <input
@@ -224,15 +240,15 @@ export default function DeleteModal({
                     value={toRow}
                     onChange={(e) => setToRow(e.target.value)}
                     dir="ltr"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-red-600 focus:outline-hidden font-bold text-center"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-slate-800 text-white focus:border-red-500 focus:outline-hidden font-bold text-center"
                   />
                 </div>
               </div>
 
               {parseInt(fromRow) > 0 && parseInt(toRow) >= parseInt(fromRow) && (
-                <div className="text-xs text-slate-600 bg-red-50/60 p-3 rounded-lg border border-red-100 flex items-center justify-between">
+                <div className="text-xs text-slate-300 bg-red-950/30 p-3 rounded-lg border border-red-900/50 flex items-center justify-between">
                   <span>تعداد کالاهای مشمول این بازه:</span>
-                  <span className="font-bold text-red-700">
+                  <span className="font-bold text-red-300">
                     {toPersianDigits(parseInt(toRow) - parseInt(fromRow) + 1)} کالا
                   </span>
                 </div>
@@ -242,26 +258,26 @@ export default function DeleteModal({
 
           {mode === 'all' && (
             <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
-                <AlertOctagon className="w-6 h-6 text-red-600 shrink-0 mt-0.5" />
-                <div className="text-sm text-red-950 space-y-1">
-                  <p className="font-bold text-red-700">
+              <div className="p-4 rounded-xl bg-red-950/50 border border-red-800/70 flex items-start gap-3">
+                <AlertOctagon className="w-6 h-6 text-red-400 shrink-0 mt-0.5" />
+                <div className="text-sm text-red-200 space-y-1">
+                  <p className="font-bold text-red-300">
                     آیا مطمئن هستید که می‌خواهید تمام کالاها حذف شوند؟
                   </p>
-                  <p className="text-xs text-red-800 leading-relaxed">
+                  <p className="text-xs text-red-200/80 leading-relaxed">
                     با اجرای این عملیات، تمامی رکورد‌های بخش <strong>{sectionName}</strong> به صورت برگشت‌ناپذیر از پایگاه‌داده حذف خواهند شد.
                   </p>
                 </div>
               </div>
 
-              <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors select-none">
+              <label className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-800 hover:bg-slate-800/40 cursor-pointer transition-colors select-none">
                 <input
                   type="checkbox"
                   checked={confirmAllChecked}
                   onChange={(e) => setConfirmAllChecked(e.target.checked)}
-                  className="w-4 h-4 text-red-600 rounded-sm border-slate-300 focus:ring-red-500"
+                  className="w-4 h-4 text-red-600 rounded-sm bg-slate-800 border-slate-700 focus:ring-red-500 cursor-pointer"
                 />
-                <span className="text-xs font-bold text-slate-800">
+                <span className="text-xs font-bold text-slate-200">
                   تایید می‌کنم که تمام داده‌های این بخش برای همیشه پاک شوند.
                 </span>
               </label>
@@ -270,12 +286,12 @@ export default function DeleteModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-end gap-3">
+        <div className="bg-slate-950/80 px-6 py-4 border-t border-slate-800 flex items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
             disabled={isDeleting}
-            className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold text-sm transition-colors"
+            className="px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-750 text-slate-300 hover:text-white font-bold text-sm transition-colors cursor-pointer"
           >
             انصراف
           </button>
@@ -283,7 +299,7 @@ export default function DeleteModal({
             type="button"
             onClick={handleDelete}
             disabled={isDeleting || (mode === 'all' && !confirmAllChecked)}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-md shadow-red-600/20 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-sm shadow-lg shadow-red-600/30 transition-all disabled:opacity-50 cursor-pointer"
           >
             {isDeleting ? (
               <>

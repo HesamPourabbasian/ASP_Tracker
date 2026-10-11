@@ -188,15 +188,15 @@ function PrintContent() {
   };
 
   return (
-    <div className="bg-slate-100 min-h-screen font-sans text-black antialiased p-0 sm:p-4 print:bg-white print:p-0">
+    <div className="bg-[#090d16] min-h-screen font-sans antialiased p-0 sm:p-4 print:bg-white print:p-0">
       {/* Top Floating Control Bar - Hidden on print */}
-      <div className="no-print bg-slate-900 text-white rounded-2xl p-4 mb-6 shadow-xl flex flex-wrap items-center justify-between gap-4 sticky top-4 z-50 border border-slate-700 max-w-[210mm] mx-auto">
+      <div className="no-print bg-slate-900/95 backdrop-blur-md text-white rounded-2xl p-4 mb-6 shadow-2xl flex flex-wrap items-center justify-between gap-4 sticky top-4 z-50 border border-slate-800 max-w-[210mm] mx-auto ring-1 ring-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center font-black text-white shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center font-black text-white shrink-0 shadow-md shadow-red-900/50">
             ASP
           </div>
           <div>
-            <h1 className="font-bold text-base">پیش‌نمایش چاپ و تبدیل به PDF</h1>
+            <h1 className="font-bold text-base text-white">پیش‌نمایش چاپ و تبدیل به PDF</h1>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-xs text-slate-400 flex items-center gap-1 font-bold">
                 <Pencil className="w-3 h-3 text-red-400" />
@@ -206,11 +206,11 @@ function PrintContent() {
                 type="text"
                 value={sectionTitle}
                 onChange={(e) => setSectionTitle(e.target.value)}
-                className="bg-slate-800 border border-slate-600 focus:border-red-500 rounded px-2 py-0.5 text-xs font-bold text-white outline-hidden w-36 sm:w-48"
+                className="bg-slate-950 border border-slate-700 focus:border-red-500 rounded-lg px-2.5 py-1 text-xs font-bold text-white outline-hidden w-36 sm:w-48 transition-colors"
                 title="جهت ویرایش عنوان بخش تایپ کنید"
                 placeholder="عنوان بخش..."
               />
-              <span className="text-xs text-slate-500">—</span>
+              <span className="text-xs text-slate-600">—</span>
               <span className="text-xs text-slate-400">{getRangeLabel()}</span>
             </div>
           </div>
@@ -220,10 +220,10 @@ function PrintContent() {
           {/* Toggle Paper Saver */}
           <button
             onClick={() => setPaperSaver((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
               paperSaver
-                ? 'bg-emerald-600/20 text-emerald-300 border-emerald-500/50 hover:bg-emerald-600/30'
-                : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
+                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900/50 shadow-xs'
+                : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white hover:bg-slate-750'
             }`}
             title="حالت دو ستونه فشرده با حداقل ۱۰۰ کالا در هر برگه جهت صرفه‌جویی در مصرف کاغذ"
           >
@@ -242,7 +242,7 @@ function PrintContent() {
 
           <button
             onClick={() => window.close()}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition-colors cursor-pointer border border-slate-700"
           >
             <ArrowRight className="w-4 h-4" />
             <span>بستن</span>
@@ -250,7 +250,7 @@ function PrintContent() {
           <button
             onClick={handlePrint}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-lg shadow-red-600/30 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs font-black shadow-lg shadow-red-600/30 transition-all cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>چاپ / ذخیره PDF</span>
@@ -259,12 +259,12 @@ function PrintContent() {
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-32 text-slate-500">
-          <Loader2 className="w-10 h-10 animate-spin text-red-600 mb-3" />
+        <div className="flex flex-col items-center justify-center py-32 text-slate-400">
+          <Loader2 className="w-10 h-10 animate-spin text-red-500 mb-3" />
           <span className="font-bold text-sm">در حال آماده‌سازی سند جهت چاپ...</span>
         </div>
       ) : items.length === 0 ? (
-        <div className="w-full max-w-[210mm] mx-auto bg-white p-12 rounded-xl shadow-sm text-center text-slate-500 font-medium">
+        <div className="w-full max-w-[210mm] mx-auto bg-slate-900 border border-slate-800 p-12 rounded-2xl shadow-xl text-center text-slate-400 font-medium">
           هیچ داده‌ای در این بازه جهت چاپ یافت نشد.
         </div>
       ) : paperSaver ? (
@@ -480,8 +480,8 @@ export default function PrintPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex flex-col items-center justify-center min-h-screen text-slate-500">
-          <Loader2 className="w-10 h-10 animate-spin text-red-600 mb-3" />
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[#090d16] text-slate-400">
+          <Loader2 className="w-10 h-10 animate-spin text-red-500 mb-3" />
           <span className="font-bold text-sm">در حال بارگذاری پیش‌نمایش چاپ...</span>
         </div>
       }
