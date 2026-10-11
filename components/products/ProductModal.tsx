@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { X, PlusCircle, Edit3, Loader2, Calendar, Link2, Tag, Barcode, FileText, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, PlusCircle, Edit3, Loader2, Check } from 'lucide-react';
 import { UnifiedProduct, ProductType } from '@/lib/types';
-import { getTodayJalali, normalizeJalaliDate, toPersianDigits, isValidJalaliDate } from '@/lib/date-utils';
+import { getTodayJalali, normalizeJalaliDate, isValidJalaliDate } from '@/lib/date-utils';
 import { useToast } from '@/components/ui/ToastContext';
 
 interface ProductModalProps {
@@ -35,36 +35,15 @@ export default function ProductModal({
     ? 'افزودن کالای مشکل‌دار'
     : 'افزودن کالای تصحیح‌شده';
 
-  // Form State
-  const [productName, setProductName] = useState('');
-  const [brand, setBrand] = useState('');
-  const [siteCode, setSiteCode] = useState('');
-  const [link, setLink] = useState('');
-  const [date, setDate] = useState('');
-  const [description, setDescription] = useState('');
+  // Form State initialized directly from productToEdit or defaults
+  const [productName, setProductName] = useState(() => productToEdit?.productName || '');
+  const [brand, setBrand] = useState(() => productToEdit?.brand || '');
+  const [siteCode, setSiteCode] = useState(() => productToEdit?.siteCode || '');
+  const [link, setLink] = useState(() => productToEdit?.link || '');
+  const [date, setDate] = useState(() => productToEdit?.date || getTodayJalali());
+  const [description, setDescription] = useState(() => productToEdit?.description || '');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      if (productToEdit) {
-        setProductName(productToEdit.productName || '');
-        setBrand(productToEdit.brand || '');
-        setSiteCode(productToEdit.siteCode || '');
-        setLink(productToEdit.link || '');
-        setDate(productToEdit.date || getTodayJalali());
-        setDescription(productToEdit.description || '');
-      } else {
-        setProductName('');
-        setBrand('');
-        setSiteCode('');
-        setLink('');
-        setDate(getTodayJalali());
-        setDescription('');
-      }
-      setErrors({});
-    }
-  }, [isOpen, productToEdit]);
 
   if (!isOpen) return null;
 
