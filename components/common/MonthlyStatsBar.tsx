@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { BarChart3, ChevronDown, ChevronUp, Calendar, ArrowUpRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BarChart3, ChevronDown, ChevronUp, ArrowUpRight, Wallet } from 'lucide-react';
 import { MonthlyBreakdownItem } from '@/lib/types';
 import { toPersianDigits } from '@/lib/date-utils';
+import { formatWithCommas, getStoredSalaryRate } from '@/lib/salary-utils';
 
 interface MonthlyStatsBarProps {
   monthlyBreakdown?: MonthlyBreakdownItem[];
@@ -19,6 +20,13 @@ export default function MonthlyStatsBar({
   activeType = 'problematic',
 }: MonthlyStatsBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [salaryRate, setSalaryRate] = useState<number>(() => getStoredSalaryRate());
+
+  useEffect(() => {
+    const handleRateUpdate = () => setSalaryRate(getStoredSalaryRate());
+    window.addEventListener('asp_salary_rate_updated', handleRateUpdate);
+    return () => window.removeEventListener('asp_salary_rate_updated', handleRateUpdate);
+  }, []);
 
   if (!monthlyBreakdown || monthlyBreakdown.length === 0) {
     return null;
@@ -54,6 +62,22 @@ export default function MonthlyStatsBar({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Quick Salary Calculator Modal Trigger */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('open_salary_modal'));
+              }
+            }}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100/90 text-amber-900 border border-amber-200/90 text-[11px] font-bold transition-all shadow-2xs hover:shadow-xs"
+            title="محاسبه حقوق و درآمد ماه‌ها"
+          >
+            <Wallet className="w-3.5 h-3.5 text-amber-700" />
+            <span>محاسبه درآمد ماه‌ها</span>
+          </button>
+
           <span className="text-[11px] text-slate-500 font-bold hidden sm:inline">
             {isExpanded ? 'بستن نمودار' : 'مشاهده نمودار و جزئیات'}
           </span>
@@ -76,6 +100,7 @@ export default function MonthlyStatsBar({
                 activeType === 'problematic' ? item.problematicCount : item.correctedCount;
               const isSelected = selectedMonth === item.month;
               const percentage = Math.round((count / maxCount) * 100);
+              const monthlySalary = count * salaryRate;
 
               return (
                 <div
@@ -99,6 +124,14 @@ export default function MonthlyStatsBar({
                       {toPersianDigits(count)}
                     </span>
                     <span className="text-[10px] text-slate-500 font-medium">کالا</span>
+                  </div>
+
+                  {/* Monthly Earnings Chip */}
+                  <div className="mt-1.5 pt-1.5 border-t border-slate-200/60 flex items-center justify-between text-[10px]">
+                    <span className="text-slate-400 font-medium">حقوق:</span>
+                    <span className="font-extrabold text-emerald-700">
+                      {toPersianDigits(formatWithCommas(monthlySalary))} ت
+                    </span>
                   </div>
 
                   {/* Mini Progress Bar */}
