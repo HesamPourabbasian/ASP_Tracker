@@ -39,7 +39,6 @@ export const PERSIAN_MONTH_DETAILS: PersianMonthDetail[] = [
 ];
 
 const PERSIAN_DIGITS = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-const ENGLISH_DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 /**
  * Convert any string containing English digits to Persian digits
@@ -220,7 +219,14 @@ export interface GroupedIranianMonthTracks<T> {
 /**
  * Group an array of tracks (or any items with a Jalali date property) by Iranian month
  */
-export function groupTracksByIranianMonth<T extends { date: string }>(
+export function groupTracksByIranianMonth<
+  T extends {
+    date: string;
+    createdAt?: Date | string;
+    rowNumber?: number;
+    monthRowNumber?: number;
+  }
+>(
   items: T[],
   order: 'asc' | 'desc' = 'desc'
 ): GroupedIranianMonthTracks<T>[] {
@@ -265,7 +271,7 @@ export function groupTracksByIranianMonth<T extends { date: string }>(
 
   // Always sort items within each month group from newer to latest
   for (const group of result) {
-    group.items.sort((a: any, b: any) => {
+    group.items.sort((a: T, b: T) => {
       const dateA = normalizeJalaliDate(toEnglishDigits(a.date || ''));
       const dateB = normalizeJalaliDate(toEnglishDigits(b.date || ''));
       const dateComp = order === 'desc' ? dateB.localeCompare(dateA) : dateA.localeCompare(dateB);
@@ -279,7 +285,7 @@ export function groupTracksByIranianMonth<T extends { date: string }>(
     });
 
     // Assign sequential month-by-month row numbers (1, 2, 3, ...) so each month counts independently
-    group.items.forEach((item: any, idx: number) => {
+    group.items.forEach((item: T, idx: number) => {
       item.rowNumber = idx + 1;
       item.monthRowNumber = idx + 1;
     });
