@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
     const isAll = pageSizeParam === 'all';
     const page = Math.max(1, parseInt(pageParam || '1', 10));
-    const pageSize = isAll ? 100000 : Math.max(1, parseInt(pageSizeParam || '20', 10));
+    const pageSize = isAll ? 100000 : Math.max(1, parseInt(pageSizeParam || '600', 10));
 
     // Build Prisma Where Clause
     const where: Prisma.ProblematicProductWhereInput = {};
@@ -140,9 +140,9 @@ export async function GET(request: Request) {
       }
     }
 
-    const availableMonths: IranianMonthOption[] = Array.from(monthCounts.entries())
-      .sort((a, b) => b[0].localeCompare(a[0]))
-      .map(([_, val]) => ({
+    const availableMonths: IranianMonthOption[] = Array.from(monthCounts.values())
+      .sort((a, b) => `${b.year}/${b.month}`.localeCompare(`${a.year}/${a.month}`))
+      .map((val) => ({
         key: val.month,
         monthNumber: val.monthNumber,
         monthName: val.monthName,
