@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { X, Copy, Check, FileText, ExternalLink, Calendar, Tag, Barcode } from 'lucide-react';
 import { UnifiedProduct } from '@/lib/types';
-import { toPersianDigits, formatJalaliHumanReadable } from '@/lib/date-utils';
+import { toPersianDigits } from '@/lib/date-utils';
 
 interface DescriptionModalProps {
   isOpen: boolean;
