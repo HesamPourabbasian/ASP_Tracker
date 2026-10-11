@@ -7,16 +7,10 @@ import {
   Trash2,
   Edit2,
   ExternalLink,
-  Eye,
-  CheckSquare,
-  Square,
-  AlertOctagon,
-  FileSpreadsheet,
-  Layers,
   ChevronDown,
   ChevronUp,
   Calendar,
-  Info,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { UnifiedProduct, ProductType, PaginationInfo } from '@/lib/types';
 import { toPersianDigits, groupTracksByIranianMonth } from '@/lib/date-utils';
@@ -55,10 +49,6 @@ export default function ProductTable({
   // PDF Modal state
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
-  // Fast range selection in header
-  const [rangeFrom, setRangeFrom] = useState('');
-  const [rangeTo, setRangeTo] = useState('');
-
   // Iranian monthly grouping state (default: true to show month by month)
   const [isGroupedByMonth, setIsGroupedByMonth] = useState(true);
   const [collapsedMonths, setCollapsedMonths] = useState<Record<string, boolean>>({});
@@ -92,18 +82,6 @@ export default function ProductTable({
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
-  };
-
-  const handleApplyRangeSelection = () => {
-    const from = parseInt(rangeFrom, 10);
-    const to = parseInt(rangeTo, 10);
-    if (isNaN(from) || isNaN(to) || from < 1 || to < from) {
-      return;
-    }
-    const matchingIds = items
-      .filter((item) => item.rowNumber >= from && item.rowNumber <= to)
-      .map((item) => item.id);
-    setSelectedIds(matchingIds);
   };
 
   const openAddModal = () => {
@@ -530,49 +508,60 @@ export default function ProductTable({
       </div>
 
       {/* Modals */}
-      <ProductModal
-        isOpen={isProductModalOpen}
-        onClose={() => {
-          setIsProductModalOpen(false);
-          setProductToEdit(null);
-        }}
-        type={type}
-        productToEdit={productToEdit}
-        onSuccess={onRefresh}
-      />
+      {isProductModalOpen && (
+        <ProductModal
+          key={productToEdit?.id || 'new'}
+          isOpen={isProductModalOpen}
+          onClose={() => {
+            setIsProductModalOpen(false);
+            setProductToEdit(null);
+          }}
+          type={type}
+          productToEdit={productToEdit}
+          onSuccess={onRefresh}
+        />
+      )}
 
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setProductToDelete(null);
-        }}
-        mode={deleteMode}
-        type={type}
-        productToDelete={productToDelete}
-        selectedIds={selectedIds}
-        totalTableItems={pagination.totalItems}
-        onSuccess={() => {
-          setSelectedIds([]);
-          onRefresh();
-        }}
-      />
+      {isDeleteModalOpen && (
+        <DeleteModal
+          key={`${deleteMode}-${productToDelete?.id || 'bulk'}`}
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setProductToDelete(null);
+          }}
+          mode={deleteMode}
+          type={type}
+          productToDelete={productToDelete}
+          selectedIds={selectedIds}
+          totalTableItems={pagination.totalItems}
+          onSuccess={() => {
+            setSelectedIds([]);
+            onRefresh();
+          }}
+        />
+      )}
 
-      <DescriptionModal
-        isOpen={Boolean(descriptionModalProduct)}
-        onClose={() => setDescriptionModalProduct(null)}
-        product={descriptionModalProduct}
-        siteCodeLabel={siteCodeColumnTitle}
-      />
+      {Boolean(descriptionModalProduct) && (
+        <DescriptionModal
+          isOpen={Boolean(descriptionModalProduct)}
+          onClose={() => setDescriptionModalProduct(null)}
+          product={descriptionModalProduct}
+          siteCodeLabel={siteCodeColumnTitle}
+        />
+      )}
 
-      <PdfExportModal
-        isOpen={isPdfModalOpen}
-        onClose={() => setIsPdfModalOpen(false)}
-        type={type}
-        totalTableItems={pagination.totalItems}
-        selectedCount={selectedIds.length}
-        selectedIds={selectedIds}
-      />
+      {isPdfModalOpen && (
+        <PdfExportModal
+          key={`pdf-${selectedIds.length}`}
+          isOpen={isPdfModalOpen}
+          onClose={() => setIsPdfModalOpen(false)}
+          type={type}
+          totalTableItems={pagination.totalItems}
+          selectedCount={selectedIds.length}
+          selectedIds={selectedIds}
+        />
+      )}
     </div>
   );
 }
