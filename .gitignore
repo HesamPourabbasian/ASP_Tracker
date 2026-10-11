@@ -43,3 +43,28 @@ next-env.d.ts
 
 # local test files
 test*.html
+
+# Tracks & Data files (private business tracking data)
+tracks/
+/tracks/
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.ods
+
+# Databases & local storage dumps
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+*.tar
+*.bak
+/prisma/*.db*
+/prisma/*.sqlite*
+
+# Scratch & temporary workspace files
+/scratch/
+scratch/
