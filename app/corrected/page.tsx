@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import StatsBar from '@/components/common/StatsBar';
 import MonthlyStatsBar from '@/components/common/MonthlyStatsBar';
 import FilterBar from '@/components/products/FilterBar';
@@ -9,7 +9,6 @@ import ProductTable from '@/components/products/ProductTable';
 import Pagination from '@/components/products/Pagination';
 import { UnifiedProduct, PaginationInfo, IranianMonthOption, MonthlyBreakdownItem } from '@/lib/types';
 import { CheckCircle2, RefreshCw } from 'lucide-react';
-import { toPersianDigits } from '@/lib/date-utils';
 
 export default function CorrectedProductsPage() {
   const [items, setItems] = useState<UnifiedProduct[]>([]);
@@ -17,6 +16,7 @@ export default function CorrectedProductsPage() {
   const [availableMonths, setAvailableMonths] = useState<IranianMonthOption[]>([]);
   const [monthlyBreakdown, setMonthlyBreakdown] = useState<MonthlyBreakdownItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [stats, setStats] = useState<{ problematicCount: number; correctedCount: number }>({
     problematicCount: 0,
     correctedCount: 0,
@@ -31,72 +31,71 @@ export default function CorrectedProductsPage() {
   const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(600);
 
   const [pagination, setPagination] = useState<PaginationInfo>({
     page: 1,
-    pageSize: 20,
+    pageSize: 600,
     totalItems: 0,
     totalPages: 1,
     hasNextPage: false,
     hasPrevPage: false,
   });
 
-  // Fetch stats
-  const fetchStats = async () => {
-    try {
-      const res = await fetch('/api/stats');
-      if (res.ok) {
+  useEffect(() => {
+    let ignore = false;
+    async function loadData() {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams();
+        params.set('page', String(page));
+        params.set('pageSize', String(pageSize));
+        if (search.trim()) params.set('search', search.trim());
+        if (brand && brand !== 'all') params.set('brand', brand);
+        if (month && month !== 'all') params.set('month', month);
+        if (year && year !== 'all') params.set('year', year);
+        if (hasLink && hasLink !== 'all') params.set('hasLink', hasLink);
+        params.set('sortBy', sortBy);
+        params.set('sortOrder', sortOrder);
+
+        const [res, statsRes] = await Promise.all([
+          fetch(`/api/corrected?${params.toString()}`),
+          fetch('/api/stats'),
+        ]);
+
         const json = await res.json();
-        if (json.success) {
-          setStats(json.data);
-          if (json.data.monthlyBreakdown) {
-            setMonthlyBreakdown(json.data.monthlyBreakdown);
+        if (res.ok && json.success && !ignore) {
+          setItems(json.data.items || []);
+          setPagination(json.data.pagination);
+          setAvailableBrands(json.data.availableBrands || []);
+          if (json.data.availableMonths) {
+            setAvailableMonths(json.data.availableMonths);
           }
         }
-      }
-    } catch (e) {
-      console.error('Error fetching stats:', e);
-    }
-  };
 
-  // Fetch table data
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('page', String(page));
-      params.set('pageSize', String(pageSize));
-      if (search.trim()) params.set('search', search.trim());
-      if (brand && brand !== 'all') params.set('brand', brand);
-      if (month && month !== 'all') params.set('month', month);
-      if (year && year !== 'all') params.set('year', year);
-      if (hasLink && hasLink !== 'all') params.set('hasLink', hasLink);
-      params.set('sortBy', sortBy);
-      params.set('sortOrder', sortOrder);
-
-      const res = await fetch(`/api/corrected?${params.toString()}`);
-      const json = await res.json();
-
-      if (res.ok && json.success) {
-        setItems(json.data.items || []);
-        setPagination(json.data.pagination);
-        setAvailableBrands(json.data.availableBrands || []);
-        if (json.data.availableMonths) {
-          setAvailableMonths(json.data.availableMonths);
+        const statsJson = await statsRes.json();
+        if (statsRes.ok && statsJson.success && !ignore) {
+          setStats(statsJson.data);
+          if (statsJson.data.monthlyBreakdown) {
+            setMonthlyBreakdown(statsJson.data.monthlyBreakdown);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading corrected products:', err);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
         }
       }
-    } catch (err) {
-      console.error('Error loading corrected products:', err);
-    } finally {
-      setLoading(false);
     }
-  }, [page, pageSize, search, brand, month, year, hasLink, sortBy, sortOrder]);
 
-  useEffect(() => {
-    fetchData();
-    fetchStats();
-  }, [fetchData]);
+    loadData();
+    return () => {
+      ignore = true;
+    };
+  }, [page, pageSize, search, brand, month, year, hasLink, sortBy, sortOrder, refreshTrigger]);
+
+  const onRefresh = () => setRefreshTrigger((prev) => prev + 1);
 
   const handleResetFilters = () => {
     setSearch('');
@@ -137,10 +136,7 @@ export default function CorrectedProductsPage() {
         </div>
 
         <button
-          onClick={() => {
-            fetchData();
-            fetchStats();
-          }}
+          onClick={onRefresh}
           className="self-start sm:self-auto flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-bold transition-all shadow-2xs hover:bg-slate-50 cursor-pointer"
           title="بروزرسانی جدول"
         >
@@ -215,7 +211,6 @@ export default function CorrectedProductsPage() {
           setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))
         }
         availableBrands={availableBrands}
-        availableMonths={availableMonths}
         onReset={handleResetFilters}
         isFiltered={isFiltered}
       />
@@ -226,10 +221,7 @@ export default function CorrectedProductsPage() {
         items={items}
         pagination={pagination}
         loading={loading}
-        onRefresh={() => {
-          fetchData();
-          fetchStats();
-        }}
+        onRefresh={onRefresh}
       />
 
       {/* Pagination Controls */}
