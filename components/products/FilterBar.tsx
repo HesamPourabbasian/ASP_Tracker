@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Search, Filter, RotateCcw, ArrowUpDown, Tag, Link as LinkIcon, X, Calendar } from 'lucide-react';
-import { toPersianDigits, PERSIAN_MONTH_DETAILS } from '@/lib/date-utils';
-import { IranianMonthOption } from '@/lib/types';
+import { Search, Filter, RotateCcw, ArrowUpDown, X } from 'lucide-react';
+import { PERSIAN_MONTH_DETAILS } from '@/lib/date-utils';
 
 interface FilterBarProps {
   search: string;
@@ -19,7 +18,6 @@ interface FilterBarProps {
   sortOrder: 'asc' | 'desc';
   onSortOrderToggle: () => void;
   availableBrands: string[];
-  availableMonths?: IranianMonthOption[];
   onReset: () => void;
   isFiltered: boolean;
 }
@@ -38,7 +36,6 @@ export default function FilterBar({
   sortOrder,
   onSortOrderToggle,
   availableBrands,
-  availableMonths = [],
   onReset,
   isFiltered,
 }: FilterBarProps) {
