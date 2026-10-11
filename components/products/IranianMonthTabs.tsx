@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
-import { Calendar, ChevronLeft, ChevronRight, Sparkles, Filter } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Sparkles, Filter, Wallet } from 'lucide-react';
 import { PERSIAN_MONTH_DETAILS, toPersianDigits, getCurrentJalaliMonth, getCurrentJalaliYear } from '@/lib/date-utils';
 import { IranianMonthOption } from '@/lib/types';
+import { formatWithCommas, getStoredSalaryRate } from '@/lib/salary-utils';
 
 interface IranianMonthTabsProps {
   selectedMonth: string; // 'all' or '01'-'12'
@@ -21,11 +22,18 @@ export default function IranianMonthTabs({
   selectedYear,
   onSelectYear,
   availableMonths = [],
-  availableYears = ['1403', '1402', '1404'],
+  availableYears = ['1403', '1402', '1404', '1405'],
   totalAllCount,
 }: IranianMonthTabsProps) {
   const currentMonthKey = getCurrentJalaliMonth();
   const currentYear = getCurrentJalaliYear();
+  const [salaryRate, setSalaryRate] = useState<number>(() => getStoredSalaryRate());
+
+  useEffect(() => {
+    const handleRateUpdate = () => setSalaryRate(getStoredSalaryRate());
+    window.addEventListener('asp_salary_rate_updated', handleRateUpdate);
+    return () => window.removeEventListener('asp_salary_rate_updated', handleRateUpdate);
+  }, []);
 
   // Create a map of monthNumber -> count
   const countByMonth = new Map<string, number>();
@@ -87,6 +95,21 @@ export default function IranianMonthTabs({
             <Sparkles className="w-3 h-3" />
             <span>ماه جاری ({toPersianDigits(currentYear)})</span>
           </button>
+
+          {/* Salary Calculation Modal Trigger */}
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('open_salary_modal'));
+              }
+            }}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 text-[11px] font-bold transition-colors cursor-pointer border border-amber-200 shadow-2xs"
+            title="محاسبه حقوق و دستمزد ماهانه بر مبنای هر ترک ۴۵,۰۰۰ تومان"
+          >
+            <Wallet className="w-3.5 h-3.5 text-amber-700" />
+            <span className="hidden sm:inline">محاسبه حقوق</span>
+          </button>
         </div>
       </div>
 
@@ -120,12 +143,18 @@ export default function IranianMonthTabs({
           const isSelected = selectedMonth === month.key;
           const count = countByMonth.get(month.key) || 0;
           const isCurrent = month.key === currentMonthKey;
+          const monthSalary = count * salaryRate;
 
           return (
             <button
               key={month.key}
               type="button"
               onClick={() => onSelectMonth(month.key)}
+              title={
+                count > 0
+                  ? `${month.name}: ${toPersianDigits(count)} کالا • دستمزد: ${toPersianDigits(formatWithCommas(monthSalary))} تومان`
+                  : month.name
+              }
               className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer relative ${
                 isSelected
                   ? 'bg-red-600 text-white shadow-md shadow-red-600/20 scale-102 ring-2 ring-red-600/20'
