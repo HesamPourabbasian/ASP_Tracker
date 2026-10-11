@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { X, Printer, FileDown, CheckCircle, Sliders, Hash } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Printer, FileDown } from 'lucide-react';
 import { ProductType } from '@/lib/types';
 import { toPersianDigits, PERSIAN_MONTH_DETAILS, getCurrentJalaliMonth } from '@/lib/date-utils';
 
@@ -22,23 +22,16 @@ export default function PdfExportModal({
   selectedCount,
   selectedIds,
 }: PdfExportModalProps) {
-  const [exportMode, setExportMode] = useState<'range' | 'selected' | 'all' | 'month'>('range');
+  const [exportMode, setExportMode] = useState<'range' | 'selected' | 'all' | 'month'>(
+    () => (selectedCount > 0 ? 'selected' : 'range')
+  );
   const [fromRow, setFromRow] = useState<string>('1');
-  const [toRow, setToRow] = useState<string>('20');
-  const [selectedMonth, setSelectedMonth] = useState<string>('06');
-
-  useEffect(() => {
-    if (isOpen) {
-      if (selectedCount > 0) {
-        setExportMode('selected');
-      } else {
-        setExportMode('range');
-      }
-      setFromRow('1');
-      setToRow(String(Math.min(20, Math.max(1, totalTableItems))));
-      setSelectedMonth(getCurrentJalaliMonth());
-    }
-  }, [isOpen, selectedCount, totalTableItems]);
+  const [toRow, setToRow] = useState<string>(
+    () => String(Math.min(20, Math.max(1, totalTableItems)))
+  );
+  const [selectedMonth, setSelectedMonth] = useState<string>(
+    () => getCurrentJalaliMonth()
+  );
 
   if (!isOpen) return null;
 
