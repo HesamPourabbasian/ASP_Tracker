@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { X, Trash2, AlertTriangle, AlertOctagon, Loader2, ArrowLeft } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Trash2, AlertTriangle, AlertOctagon, Loader2 } from 'lucide-react';
 import { UnifiedProduct, ProductType } from '@/lib/types';
 import { toPersianDigits } from '@/lib/date-utils';
 import { useToast } from '@/components/ui/ToastContext';
@@ -31,19 +31,9 @@ export default function DeleteModal({
 }: DeleteModalProps) {
   const toast = useToast();
   const [fromRow, setFromRow] = useState<string>('1');
-  const [toRow, setToRow] = useState<string>('10');
+  const [toRow, setToRow] = useState<string>(() => String(Math.min(10, Math.max(1, totalTableItems))));
   const [confirmAllChecked, setConfirmAllChecked] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      setConfirmAllChecked(false);
-      if (mode === 'range') {
-        setFromRow('1');
-        setToRow(String(Math.min(10, Math.max(1, totalTableItems))));
-      }
-    }
-  }, [isOpen, mode, totalTableItems]);
 
   if (!isOpen) return null;
 
